@@ -2,7 +2,7 @@
  *Amy Krystosik                  					*
  *chikv, dengue, and zika in cali, colombia       	*
  *PHD dissertation- epi analysis only               *
- *last updated 7:18PM July 24, 2016 
+ *last updated 7:24PM July 24, 2016 
  * FILE NAME: epi_analysis_only_7-18PM_July_24_2016.do* 
  ***************************************************/
 cd "C:\Users\Amy\OneDrive\epi analysis" 
