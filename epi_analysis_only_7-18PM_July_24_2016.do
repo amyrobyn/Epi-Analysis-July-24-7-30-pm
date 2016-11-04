@@ -1,13 +1,13 @@
 /****************************************************
- *Amy Krystosik                  					*
+ *Amykr Krystosik                  					*
  *chikv, dengue, and zika in cali, colombia       	*
  *PHD dissertation- epi analysis only               *
  *last updated 7:24PM July 24, 2016 
  * FILE NAME: epi_analysis_only_7-18PM_July_24_2016.do* 
  ***************************************************/
-cd "C:\Users\Amy\OneDrive\epi analysis" 
+cd "C:\Users\Amykr\OneDrive\epi analysis" 
 
-use "C:\Users\Amy\OneDrive\epi analysis\temp.dta", clear
+use "C:\Users\Amykr\OneDrive\epi analysis\temp.dta", clear
 
 capture log close 
 log using "epi_analysis_only_7-18PM_July_24_2016.smcl", text replace 
@@ -33,20 +33,20 @@ tostring CODIGO, replace
 *	drop direccion dir_res_ freq_cedula4 freq_cedula2 ID_CODE localidad_ nom_upgd ndep_proce nmun_proce ndep_resi nmun_resi COD_COMUNA AREA PERIMETRO estrato_mo ACUERDO LIMITES dengue dengue_status dengue_death1 dengue_death2 dengue_death3 dengue_death4 chkv_status country append_merged direcionjavier cod_pre cod_sub pri_nom_ seg_nom_ pri_ape_ seg_ape_ tip_ide_ cod_pais_o cod_dpto_o cod_mun_o area_ cen_pobla_ vereda_ tip_ss_ cod_ase_ cod_dpto_r cod_mun_r fec_con_ tip_cas_ tip_cas_num fec_hos_ con_fin_ fec_def_ ajuste_ adjustment_num telefono_ cer_def_ cbmte_ nuni_modif fec_arc_xl nom_dil_f_ tel_dil_f_ fec_aju_ fm_fuerza fm_unidad fm_grado nmun_notif ndep_notif nreg chikv2015 control fec_exp nit_upgd cod_mun_d famantdngu direclabor fiebre cefalea dolrretroo malgias artralgia erupcionr dolor_abdo vomito diarrea somnolenci hipotensio hepatomeg hem_mucosa hipotermia caida_plaq acum_liqui aum_hemato extravasac hemorr_hem choque dao_organ muesttejid mueshigado muesbazo muespulmon muescerebr muesmiocar muesmedula muesrion classfinal_num conducta append20142015 merged sex1 sex2 freq_cedula dup
 
 *export raw data
-	save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
+	save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
 	save "dengue_chikv_oct2014-oct2015_cali.dta", replace
-	export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\dengue_chikv_zika_oct2014-abril2016_cali.xls", firstrow(variables) replace
+	export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\dengue_chikv_zika_oct2014-abril2016_cali.xls", firstrow(variables) replace
 	export excel using "dengue_chikv_zika_oct2014-abril2016_cali.xls", firstrow(variables) sheet("sheet1") replace
 
 *export the new addresses for javier/*export for secretary of healtlh geocoding
-	export excel CODIGO ID_CODE direccion dir_res_ barrio ID_BARRIO using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\direcciones_krystosik_5mayo2016B", firstrow(variables) replace
+	export excel CODIGO ID_CODE direccion dir_res_ barrio ID_BARRIO using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\direcciones_krystosik_5mayo2016B", firstrow(variables) replace
 	export excel CODIGO ID_CODE direccion dir_res_ barrio ID_BARRIO using "direcciones_krystosik_5mayo2016B", firstrow(variables) sheet("sheet1") replace
 
 
 	
 ****************************************************************incidence****************************************************************
 	*pop standardization incidence by agecatepi and sex***
-		import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.xls", sheet("Sheet1") firstrow clear
+		import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.xls", sheet("Sheet1") firstrow clear
 		tostring stratavar_age, replace
 		collapse (sum) popvar, by(stratavars_year stratavars_female stratavar_age)
 
@@ -64,29 +64,29 @@ tostring CODIGO, replace
 		rename stratavars_female female 
 		rename stratavar_age edad_cat_epi 
 
-		save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta", replace
+		save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta", replace
 
-		use "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
+		use "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
 		tostring Age_Categories, replace
 		destring anos, replace
 		tostring edad_cat_epi, replace
-		merge m:1 anos female edad_cat_epi using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta"
-		save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases_epiagecats.dta", replace
+		merge m:1 anos female edad_cat_epi using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta"
+		save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases_epiagecats.dta", replace
 
 	*crude incidence table by age
 		gen casecount = 1
 		gen crudeincidence = .
 		replace crudeincidence = casecount/ popvar
-		export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\arcgis analysis\gwr models\cases_incidence.xls", firstrow(variables) replace 
+		export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\arcgis analysis\gwr models\cases_incidence.xls", firstrow(variables) replace 
 
 		egen crudeincidencesum = sum(crudeincidence), by(anos Sex Age_Categories nom_eve)
 		collapse (mean) crudeincidencesum, by(anos Sex Age_Categories nom_eve)
 		gen crudeincidence1000000 = crudeincidencesum*100000
 		*bysort nom_eve stratavars_year stratavars_female stratavar_age: tab crudeincidence1000000
-		export excel using "C:\Users\Amy\OneDrive\epi analysis\incidence.xls", firstrow(variables) replace 
+		export excel using "C:\Users\Amykr\OneDrive\epi analysis\incidence.xls", firstrow(variables) replace 
 
 ************pop weighted incidence table by age****************
-	use "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases.dta", replace
+	use "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases.dta", replace
 		gen casecount = 1
 		gen incidenceweighted = .
 		replace incidenceweighted = casecount/ popvar_weighted
@@ -129,6 +129,7 @@ tostring CODIGO, replace
 	replace outcome_collapsed = "Chikungunya" if nom_eve =="Chikungunya"
 
 *create collapsed outcome category of chikv and dengue without and with severity and grave and death. 
+capture drop outcome_collapsed_2 
 	gen outcome_collapsed_2 = .
 	*outcome = 1 for dengue without warning
 	replace outcome_collapsed_2 = 1 if outcome ==1
@@ -149,11 +150,11 @@ tostring CODIGO, replace
 	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(outcome_collapsed) saving("table1_outcome_collapsed.xls", replace ) missing test
 	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(outcome_collapsed_2) saving("table1_outcome_collapsed.xls", replace ) missing test
 *table 1 for all cases by outcome where nom event is: Chikungunya	Dengue	Severe Dengue & Mortality	Zika
-	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(nom_eve) saving("C:\Users\Amy\OneDrive\epi analysis\table1_nom_eve_confirmed.xls", replace) missing test
+	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(nom_eve) saving("C:\Users\Amykr\OneDrive\epi analysis\table1_nom_eve_confirmed.xls", replace) missing test
 *table 1 for all cases by outcome where 0 is chkv, 1 is dengue without warning signs, 2 is dengue with warning signs, 3 is denuge grave, 4 is dengue death
-	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(outcome) saving("C:\Users\Amy\OneDrive\epi analysis\table1_OUTCOME_confirmed.xls", replace) missing test 
+	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(outcome) saving("C:\Users\Amykr\OneDrive\epi analysis\table1_OUTCOME_confirmed.xls", replace) missing test 
 
-save "temp2.dta", replace
+save temp2.dta, replace
 
 
 *table incidence table with f to m ratios for nom_eve
@@ -161,7 +162,7 @@ save "temp2.dta", replace
 		egen weightedincidencesum = sum(incidenceweighted), by(anos Sex Age_Categories outcome_collapsed)
 		collapse (mean) weightedincidencesum, by(anos Sex Age_Categories outcome_collapsed confirmed Lab_result)
 		gen weightedincidence1000000 = weightedincidencesum*100000
-		export excel using "C:\Users\Amy\OneDrive\epi analysis\weightedincidencecollapased.xls", firstrow(variables) replace 
+		export excel using "C:\Users\Amykr\OneDrive\epi analysis\weightedincidencecollapased.xls", firstrow(variables) replace 
 		bysort outcome_collapsed anos Age_Categories: gen weightedincidencemale = weightedincidence1000000 if Sex=="M"
 		bysort outcome_collapsed anos Age_Categories: gen weightedincidencefemale = weightedincidence1000000 if Sex=="F"
 		collapse (firstnm) weightedincidencemale  weightedincidencefemale , by(anos Age_Categories outcome_collapsed)
@@ -170,12 +171,12 @@ save "temp2.dta", replace
 		replace lower = ratioftom - 1.96*sqrt((1/weightedincidencemale)  + (1/weightedincidencefemale))
 		gen upper = .
 		replace upper = ratioftom + 1.96*sqrt((1/weightedincidencemale)  + (1/weightedincidencefemale))
-	export excel using "C:\Users\Amy\OneDrive\epi analysis\weightedincidenceratioscollapsed.xls", firstrow(variables) replace 
+	export excel using "C:\Users\Amykr\OneDrive\epi analysis\weightedincidenceratioscollapsed.xls", firstrow(variables) replace 
 
 *table incidence table with f to m ratios for outcome_collapsed
 	use temp2.dta, clear
 		egen weightedincidencesum = sum(incidenceweighted), by(anos Sex Age_Categories outcome_collapsed)
-		collapse (mean) weightedincidencesum, by(anos Sex Age_Categories outcome_collapsed confirmed Lab_result)
+		collapse (mean) weightedincidencesum (count) n=weightedincidencesum (sd) sdweightedincidencesum =weightedincidencesum, by(anos Sex Age_Categories outcome_collapsed confirmed Lab_result)
 		gen weightedincidence1000000 = weightedincidencesum*100000
 		bysort outcome_collapsed anos Age_Categories: gen weightedincidencemale = weightedincidence1000000 if Sex=="M"
 		bysort outcome_collapsed anos Age_Categories: gen weightedincidencefemale = weightedincidence1000000 if Sex=="F"
@@ -185,8 +186,15 @@ save "temp2.dta", replace
 		replace lower = ratioftom - 1.96*sqrt((1/weightedincidencemale)  + (1/weightedincidencefemale))
 		gen upper = .
 		replace upper = ratioftom + 1.96*sqrt((1/weightedincidencemale)  + (1/weightedincidencefemale))
-	export excel using "C:\Users\Amy\OneDrive\epi analysis\weightedincidenceratiosoutcome_collapsed.xls", firstrow(variables) replace
+	export excel using "C:\Users\Amykr\OneDrive\epi analysis\weightedincidenceratiosoutcome_collapsed.xls", firstrow(variables) replace
 
+	bysort Age_Categories  outcome_collapsed: sum ratioftom
+	graph bar ratioftom, over(Age_Categories) over(outcome_collapsed)
+	graph box ratioftom, over(Age_Categories) by(outcome_collapsed)
+
+	bysort anos outcome_collapsed: sum ratioftom
+
+							
 *use regular expressions to select the dates by format and then put all of them in the same format so i can subtract one from the other. 
 	use temp2.dta, clear
 	*concat some variable categories of interest
@@ -204,30 +212,30 @@ save "temp2.dta", replace
 
 
 	*export raw data
-		export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\dengue_chikv_zika_oct2014-abril2016_cali", firstrow(variables) replace
+		export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\dengue_chikv_zika_oct2014-abril2016_cali", firstrow(variables) replace
 		export excel using "dengue_chikv_zika_oct2014-abril2016_cali", firstrow(variables) replace
 	save "temp3.dta", replace
 
 ****incidence per 100,000 by barrio*****
 		*pop standardization incidence
 		*make population by barrio dataset.
-			import excel "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.xls", sheet("barrio sex") firstrow clear
+			import excel "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.xls", sheet("barrio sex") firstrow clear
 		*tostring stratavar_age, replace
 			gen popvar_weighted_chik_barrio = .
 			replace popvar_weighted_chik_barrio = Population
 			gen str4 ID_barrio4 = string(ID_BARRIO,"%04.0f")
-			save "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.dta", replace
+			save "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.dta", replace
 		save "population bario cali.dta", replace
 
 **use the cases spatially merged to barrio from arcgis becuase not all data has barrio from sec of health. 
 	*chikv*
-		import excel "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\chikvprojected_barrio.xls", sheet("chikvprojected_barrio") firstrow clear
-		save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barrios_chikv_TableToExcel.dta", replace
+		import excel "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\chikvprojected_barrio.xls", sheet("chikvprojected_barrio") firstrow clear
+		save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barrios_chikv_TableToExcel.dta", replace
 		save "barrios_chikv_TableToExcel.dta", replace
 			destring ID_BARRIO, replace
 			gen str4 ID_barrio4 = string(ID_BARRIO,"%04.0f")
-			merge m:1 ID_barrio4 using "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.dta"
-			save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barriopopulation_chikv.dta", replace
+			merge m:1 ID_barrio4 using "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.dta"
+			save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barriopopulation_chikv.dta", replace
 			save "barriopopulation_chikv.dta", replace
 			*crude incidence table by age and barrio
 			gen casecount_barrio = 1
@@ -236,22 +244,22 @@ save "temp2.dta", replace
 			replace crudeincidence_barrio= casecount/ popvar_weighted_chik_barrio
 			gen incidence =.
 			replace incidence= casecount/popvar_weighted_chik_barrio
-			export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\arcgis analysis\gwr models\chikv_incidence_population_GWR.xls", firstrow(variables) replace
+			export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\arcgis analysis\gwr models\chikv_incidence_population_GWR.xls", firstrow(variables) replace
 			egen crudeincidence_barriosum = sum(crudeincidence_barrio), by(ID_barrio4)
 			collapse (mean) crudeincidence_barriosum, by(ID_barrio4) 
 			gen crudeincidence_barriosum1000000 = crudeincidence_barriosum*100000
 		*bysort nom_eve ID_BARRIO: tab crudeincidence_barriosum1000000
-			export excel using "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\chikv_barrio.xls", firstrow(variables) replace 
+			export excel using "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\chikv_barrio.xls", firstrow(variables) replace 
 			export excel using "chikv_barrio.xls", firstrow(variables) replace 
 
 	*dengue*
-		import excel "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\dengue_projected_barrio.xls", sheet("dengue_projected_barrio") firstrow clear
-		save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barrios_dengue_TableToExcel.dta", replace
+		import excel "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\dengue_projected_barrio.xls", sheet("dengue_projected_barrio") firstrow clear
+		save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barrios_dengue_TableToExcel.dta", replace
 		save "barrios_dengue_TableToExcel.dta", replace
 				destring ID_BARRIO, replace
 				gen str4 ID_barrio4 = string(ID_BARRIO,"%04.0f")
-				merge m:1 ID_barrio4 using "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.dta"
-				save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barriopopulation_dengue.dta", replace
+				merge m:1 ID_barrio4 using "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.dta"
+				save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barriopopulation_dengue.dta", replace
 				save "barriopopulation_dengue.dta", replace
 			*crude incidence table by age and barrio
 				gen casecount_barrio = 1
@@ -259,23 +267,23 @@ save "temp2.dta", replace
 				replace crudeincidence_barrio = casecount/Population
 				gen incidence =.
 				replace incidence= casecount/Population
-				export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\arcgis analysis\gwr models\dengue_incidence_population_GWR.xls", firstrow(variables) replace
+				export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\arcgis analysis\gwr models\dengue_incidence_population_GWR.xls", firstrow(variables) replace
 			*replace crudeincidence_barrio= casecount/ popvar_weighted_chik_barrio if  Sheet1__nom_eve == 217
 				egen crudeincidence_barriosum = sum(crudeincidence_barrio), by(ID_barrio4)
 				collapse (mean) crudeincidence_barriosum, by(ID_barrio4) 
 				gen crudeincidence_barriosum1000000 = crudeincidence_barriosum*100000
 			*bysort nom_eve ID_BARRIO: tab crudeincidence_barriosum1000000
-				export excel using "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\dengue_barrio.xls", firstrow(variables) replace 
+				export excel using "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\dengue_barrio.xls", firstrow(variables) replace 
 				export excel using "dengue_barrio.xls", firstrow(variables) replace
 
 		*zika*
-				import excel "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\zikaprojected_barrio.xls", sheet("zikaprojected_barrio") firstrow clear
-				save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barrios_zika_TableToExcel.dta", replace
+				import excel "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\zikaprojected_barrio.xls", sheet("zikaprojected_barrio") firstrow clear
+				save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barrios_zika_TableToExcel.dta", replace
 				save "barrios_zika_TableToExcel.dta", replace
 					destring ID_BARRIO, replace
 					gen str4 ID_barrio4 = string(ID_BARRIO,"%04.0f")
-					merge m:1 ID_barrio4 using "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.dta" 
-				save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barriopopulation_zika.dta", replace
+					merge m:1 ID_barrio4 using "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.dta" 
+				save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barriopopulation_zika.dta", replace
 				save "barriopopulation_zika.dta", replace
 			*crude incidence table by age and barrio
 					gen casecount_barrio = 1
@@ -283,18 +291,18 @@ save "temp2.dta", replace
 					replace crudeincidence_barrio = casecount/Population
 					gen incidence =.
 					replace incidence= casecount/Population
-				export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\arcgis analysis\gwr models\zika_incidence_population_GWR.xls", firstrow(variables) replace
+				export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\arcgis analysis\gwr models\zika_incidence_population_GWR.xls", firstrow(variables) replace
 			*replace crudeincidence_barrio= casecount/ popvar_weighted_chik_barrio if  Sheet1__nom_eve == 217
 				egen crudeincidence_barriosum = sum(crudeincidence_barrio), by(ID_barrio4)
 				collapse (mean) crudeincidence_barriosum, by(ID_barrio4) 
 				gen crudeincidence_barriosum1000000 = crudeincidence_barriosum*100000
 			*bysort nom_eve ID_BARRIO: tab crudeincidence_barriosum1000000
-				export excel using "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\zika_barrio.xls", firstrow(variables) replace 
+				export excel using "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\zika_barrio.xls", firstrow(variables) replace 
 				export excel using "zika_barrio.xls", firstrow(variables) replace
 
 
 	*******mlogit modeling*************
-		cd "C:\Users\Amy\OneDrive\epi analysis" 
+		cd "C:\Users\Amykr\OneDrive\epi analysis" 
 		use "temp3.dta", clear
 		destring *, replace
 			*convert barrio into numeric values
@@ -318,57 +326,93 @@ save "temp2.dta", replace
 
 				
 				*model 1
-						mlogit  outcome_collapsed_2 edad_cont female barrio2 fecha_nto_2
+						mlogit outcome_collapsed_2 edad_cont female barrio2 fecha_nto_2
 					*save model estimates to table
-						outreg2 using test2.xls, nolab replace e(all)
+						outreg2 using estmlogit.xls, nolab replace e(all)
 
 					*post estimation tests*
 						*this is to compare two models
 						fitstat, save
 					
-					mlogtest, all b
+					*mlogtest, all b
 					leastlikely outcome edad_cat_epi female barrio2 fecha_nto_2
 					*results say that categories 3 and 5 show no difference. try to collapse 2-4 and exclude 5.
 					*or try to combine 3 and 5. or 5 and 1. 
 					replace outcome_collapsed_2 = 1 if outcome_collapsed_2 ==5
 					mlogit  outcome_collapsed_2 edad_cont female barrio2 fecha_nto_2
-					mlogtest, all b
+					*mlogtest, all b
 					leastlikely outcome edad_cat_epi female barrio2 fecha_nto_2
 					
-					outreg2 using test2.xls, nolab append e(all)
+					outreg2 using estmlogit.xls, nolab append e(all)
 
 
 					*model 2
 					use "temp3.dta", clear
 					mlogit  outcome_collapsed_2 edad_cont pregnant barrio2 fecha_nto_2
 				*save model estimates to table
-					outreg2 using test2.xls, nolab append e(all)
+					outreg2 using estmlogit.xls, nolab append e(all)
 				*post estimation tests*
 						*this is to compare two models
 						fitstat, diff force
 					
-					mlogtest, all b
+					*mlogtest, all b
 					leastlikely outcome edad_cat_epi female barrio2 fecha_nto_2
 
 					
 			*model 3*
 						mlogit  outcome_collapsed_2 edad_cat_epi female barrio2 fecha_nto_2
 					*save model estimates to table
-						outreg2 using test2.xls, nolab append e(all)
+						outreg2 using estmlogit.xls, nolab append e(all)
 					*this is to compare two models
 						fitstat, diff force
-						mlogtest, all b
+						*mlogtest, all b
 						leastlikely outcome edad_cat_epi female barrio2 fecha_nto_2
 
 			*model 4
 					mlogit outcome edad_cat_epi pregnant_females2 barrio2 fecha_nto_2
 				*save model estimates to table
-					outreg2 using test2.xls, nolab append e(all)
+					outreg2 using estmlogit.xls, nolab append e(all)
 				
 					*this is to compare two models
 						fitstat, diff force
-						capture mlogtest, all b
+						*capture mlogtest, all b
 						leastlikely outcome edad_cat_epi female barrio2 fecha_nto_2
 
 	*now the GWR....
 	
+
+	gen mes = . 
+	replace mes = 12 if semana <=53
+		replace mes = 11 if semana <=48
+		replace mes = 10 if semana <=44
+		replace mes = 9 if semana <=40
+		replace mes = 8 if semana <=36
+		replace mes = 7 if semana <=32
+		replace mes = 6 if semana <=28
+		replace mes = 5 if semana <=24
+		replace mes = 4 if semana <=16
+		replace mes = 3 if semana <=12
+		replace mes = 2 if semana <=8
+		replace mes = 1 if semana >=1 & semana <=4
+		
+		gen case = 1
+		rename mes month
+		rename anos year
+
+preserve 
+	keep if cod_eve =="217"
+	graph bar (sum) case, over(month, label(angle(45) labsize(small))) over(year) ytitle("cases") ylabel(,angle(45)) title("Cases of CHIKV by Month-Year") note("Source: SIVIGILA") 
+	graph export "chikvmonth.tif", width(4000) replace 
+restore
+
+preserve 
+		keep if cod_eve =="895"
+	graph bar (sum) case, over(month, label(angle(45) labsize(small))) over(year) ytitle("cases") ylabel(,angle(45)) title("Cases of ZVD by Month-Year") note("Source: SIVIGILA") 
+	graph export "zvdmonth.tif", width(4000) replace 
+restore
+
+preserve 
+		keep if cod_eve =="210" |cod_eve =="220" |cod_eve =="580" 
+	graph bar (sum) case, over(month, label(angle(45) labsize(small))) over(year) ytitle("cases") ylabel(,angle(45)) title("Cases of DENV by Month-Year") note("Source: SIVIGILA")  
+	graph export "denvmonth.tif", width(4000) replace 
+restore
