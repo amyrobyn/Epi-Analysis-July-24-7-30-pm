@@ -400,19 +400,19 @@ save temp2.dta, replace
 		rename anos year
 
 preserve 
-	keep if cod_eve =="217"
+	keep if cod_eve ==217
 	graph bar (sum) case, over(month, label(angle(45) labsize(small))) over(year) ytitle("cases") ylabel(,angle(45)) title("Cases of CHIKV by Month-Year") note("Source: SIVIGILA") 
 	graph export "chikvmonth.tif", width(4000) replace 
 restore
 
 preserve 
-		keep if cod_eve =="895"
+		keep if cod_eve ==895
 	graph bar (sum) case, over(month, label(angle(45) labsize(small))) over(year) ytitle("cases") ylabel(,angle(45)) title("Cases of ZVD by Month-Year") note("Source: SIVIGILA") 
 	graph export "zvdmonth.tif", width(4000) replace 
 restore
 
 preserve 
-		keep if cod_eve =="210" |cod_eve =="220" |cod_eve =="580" 
+		keep if cod_eve ==210 |cod_eve ==220 |cod_eve ==580 
 	graph bar (sum) case, over(month, label(angle(45) labsize(small))) over(year) ytitle("cases") ylabel(,angle(45)) title("Cases of DENV by Month-Year") note("Source: SIVIGILA")  
 	graph export "denvmonth.tif", width(4000) replace 
 restore
