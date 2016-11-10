@@ -1,32 +1,32 @@
 /****************************************************
- *Amy Krystosik                  					*
+ *Amykr Krystosik                  					*
  *chikv, dengue, and zika in cali, colombia       	*
  *PHD dissertation                   				*
  *last updated June 16, 2016  						*
  ***************************************************/
-cd "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
+cd "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
 capture log close 
 log using "dissertation.smcl", text replace 
 set scrollbufsize 100000
 set more 1
 
 /*********************************
- *Amy Krystosik                  *
+ *Amykr Krystosik                  *
  *chikv and dengue in cali       *
  *dissertation                   *
  *last updated April 28, 2016  *
  *********************************/
-cd "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
+cd "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
 capture log close 
 log using "dissertation.smcl", text replace 
 set scrollbufsize 100000
 set more 1
 
 *import origional datasets and merge the dengue 2014 and 2015 and chikungunya 2015 data
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\DENGUE_OCT_DIC_2014_PARA_ICESI.xls", sheet("Hoja1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\DENGUE_OCT_DIC_2014_PARA_ICESI.xls", sheet("Hoja1") firstrow clear
 tostring fec_not fec_arc_xl fec_aju_, replace 
 save "DENGUE_OCT_DIC_2014_PARA_ICESI.dta", replace
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\D_DG_M_CALI_2015.xls", sheet("Hoja1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\D_DG_M_CALI_2015.xls", sheet("Hoja1") firstrow clear
 tostring fec_exa, replace
 tostring fec_rec, replace
 tostring fec_not, replace
@@ -35,7 +35,7 @@ tostring fec_arc_xl fec_aju_, replace
 append using "DENGUE_OCT_DIC_2014_PARA_ICESI.dta", generate(append20142015)
 save "dengue_20142015_cali.dta", replace
 
-insheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\Chik _ind2015.csv", comma clear 
+insheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\Chik _ind2015.csv", comma clear 
 tostring cod_eve, replace
 tostring fec_not, replace
 tostring semana, replace
@@ -47,7 +47,7 @@ append using "dengue_20142015_cali.dta", generate(chikv2015)
 save "dengue_chkv_20142015_cali.dta", replace
 
 *merge based on COD_BARRIO 
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\barrios.xls", sheet("barrios") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\barrios.xls", sheet("barrios") firstrow clear
 *add 9999 and 900 to barrios
 set obs `=_N+1'
 replace COD_BARRIO = "900 " in 339
@@ -67,7 +67,7 @@ drop if _merge==2
 
 save "chkvdenguebarriosmerged.dta", replace
 
-cd "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
+cd "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
 capture log close 
 log using "dissertation.smcl", text replace 
 set scrollbufsize 100000
@@ -79,7 +79,7 @@ gen ID_CODE = _n
 save "chkvdenguebarriosmerged.dta", replace
 
 /**now add the zika data and create a second Z_ID_CODE to maintain the origional ID_CODE integrity and have a new one to match
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\d_ch_z_SEPT_2015_2016_ICESI.xls", sheet("Hoja1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\d_ch_z_SEPT_2015_2016_ICESI.xls", sheet("Hoja1") firstrow clear
 save "d_ch_z_SEPT_2015_2016_ICESI.dta", replace
 tostring fec_not, replace
 append using "chkvdenguebarriosmerged.dta"
@@ -143,7 +143,7 @@ rename _merge variabl_merge
 *export number of cases by barrio
 bysort COD_BARRIO: gen freq_COD_BARRIO = _N
 tabdisp COD_BARRIO, c(freq_COD_BARRIO NOMBRE ESTRATO_MO)
-export excel freq_COD_BARRIO NOMBRE COD_BARRIO using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\diseasefreq_Barrio.xls", firstrow(variables) replace
+export excel freq_COD_BARRIO NOMBRE COD_BARRIO using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\diseasefreq_Barrio.xls", firstrow(variables) replace
 
 *standardize home addresses
 gen manipadrsH = " "
@@ -643,13 +643,13 @@ save temp.dta, replace
 
 *From HERE
 /*********************************
- *Amy Krystosik                  *
+ *Amykr Krystosik                  *
  *chikv and dengue in cali       *
  *dissertation                   *
  *last updated December 1, 2015  *
  *********************************/
 
-cd "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
+cd "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
 capture log close 
 log using "dissertation_fromHERE.smcl", text replace 
 set scrollbufsize 100000
@@ -1230,7 +1230,7 @@ sort ID_CODE, stable
 sort NOMBRE, stable
 
 *export to excel a coopy
-export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\byhand.xls", firstrow(variables) replace
+export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\byhand.xls", firstrow(variables) replace
 
 *manual edits in stata edit window
 replace byhand_manipadrsHP = "KR 40 # 31A - 49" in 1
@@ -5024,13 +5024,13 @@ save temp.dta, replace
 
 *From HERE
 /*********************************
- *Amy Krystosik                  *
+ *Amykr Krystosik                  *
  *chikv and dengue in cali       *
  *dissertation                   *
  *last updated January 3, 2016  *
  *********************************/
 
-cd "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
+cd "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
 capture log close 
 log using "dissertation_fromHERE.smcl", text replace 
 set scrollbufsize 100000
@@ -5045,7 +5045,7 @@ bysort  num_ide_  fec_not cod_eve: gen freq_cedula = _N
 sort num_ide_   fec_not direcion clasfinal cod_eve
 quietly by num_ide_  fec_not direcion clasfinal cod_eve:  gen dup = cond(_N==1,0,_n)
 tabulate dup
-export excel num_ide_ cod_eve direcion clasfinal barrio dir_res_  fec_not freq_cedula dup using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\freq_cedula.xls", firstrow(variables) replace
+export excel num_ide_ cod_eve direcion clasfinal barrio dir_res_  fec_not freq_cedula dup using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\freq_cedula.xls", firstrow(variables) replace
 drop if dup>1
 bysort  num_ide_  fec_not cod_eve: gen freq_cedula2 = _N
 
@@ -5185,7 +5185,7 @@ bysort  num_ide_  fec_not cod_eve: gen freq_cedula = _N
 sort num_ide_   fec_not direcion clasfinal cod_eve
 quietly by num_ide_  fec_not direcion clasfinal cod_eve:  gen dup = cond(_N==1,0,_n)
 tabulate dup
-export excel num_ide_ cod_eve direcion clasfinal barrio dir_res_  fec_not freq_cedula dup using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\freq_cedula.xls", firstrow(variables) replace
+export excel num_ide_ cod_eve direcion clasfinal barrio dir_res_  fec_not freq_cedula dup using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\freq_cedula.xls", firstrow(variables) replace
 drop if dup>1
 
 bysort  num_ide_  fec_not cod_eve: gen freq_cedula2 = _N
@@ -5254,16 +5254,16 @@ tab nom_eve
 tab clasfinal nom_eve
 drop count -  dup4
 /*
-*outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap.csv", comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\alldata.csv", comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_2000.csv" in 1/2000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_4000.csv" in 2001/4000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_6000.csv" in 4001/6000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_8000.csv" in 6001/8000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_10000.csv" in 8001/10000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_12000.csv" in 10001/12000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_14000.csv" in 12001/14000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_16000.csv" in 14001/15712, comma replace
+*outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap.csv", comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\alldata.csv", comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_2000.csv" in 1/2000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_4000.csv" in 2001/4000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_6000.csv" in 4001/6000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_8000.csv" in 6001/8000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_10000.csv" in 8001/10000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_12000.csv" in 10001/12000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_14000.csv" in 12001/14000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_16000.csv" in 14001/15712, comma replace
 */
 
 *export for secretary of healtlh geocoding
@@ -5276,7 +5276,7 @@ save "2014-2015.dta", replace
 
 /*
 *merge based on those that didn't georeference to include the neighborhood
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\sin_georreferenciar.xls", sheet("sin_georreferenciar") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\sin_georreferenciar.xls", sheet("sin_georreferenciar") firstrow clear
 save "sin_georreferenciar.dta", replace
 
 use "temp.dta", clear
@@ -5290,7 +5290,7 @@ list ID_CODE if _merge == 2
 
 
 *upload the new addresses from javier
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\singeoreferenciar\sin_georreferenciar_javier.xls", sheet("Sheet1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\singeoreferenciar\sin_georreferenciar_javier.xls", sheet("Sheet1") firstrow clear
 save "sin_georreferenciar_javier.dta", replace
 drop if ID_CODE =="."
 drop if ID_CODE ==" "
@@ -5418,7 +5418,7 @@ research, the minimum expected effect size is xxx.
 mlogit outcome edad female gp_gestan  gp_otros
 
 *send to davalos
-save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
+save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
 export excel using "dengue_chikv_oct2014-oct2015_cali", firstrow(variables) replace
 
 *export the new addresses for javier/*export for secretary of healtlh geocoding
@@ -5427,22 +5427,22 @@ export excel ID_CODE Z_ID_CODE direccion dir_res_ barrio ID_BARRIO using "direcc
 */
 
 /****************************************
- *Amy Krystosik                         *
+ *Amykr Krystosik                         *
  *chikv, dengue, and zika in cali       *
  *dissertation                          *
  *last updated May 4, 2016              *
  ****************************************/
-cd "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
+cd "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
 capture log close 
 log using "dissertation.smcl", text replace 
 set scrollbufsize 100000
 set more 1
 
 /**import origional datasets and merge the dengue 2014 and 2015 and chikungunya 2015 data
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\DENGUE_OCT_DIC_2014_PARA_ICESI.xls", sheet("Hoja1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\DENGUE_OCT_DIC_2014_PARA_ICESI.xls", sheet("Hoja1") firstrow clear
 tostring fec_not fec_arc_xl fec_aju_, replace 
 save "DENGUE_OCT_DIC_2014_PARA_ICESI.dta", replace
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\D_DG_M_CALI_2015.xls", sheet("Hoja1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\D_DG_M_CALI_2015.xls", sheet("Hoja1") firstrow clear
 tostring fec_exa, replace
 tostring fec_rec, replace
 tostring fec_not, replace
@@ -5451,7 +5451,7 @@ tostring fec_arc_xl fec_aju_, replace
 append using "DENGUE_OCT_DIC_2014_PARA_ICESI.dta", generate(append20142015)
 save "dengue_20142015_cali.dta", replace
 
-insheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\Chik _ind2015.csv", comma clear 
+insheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\Chik _ind2015.csv", comma clear 
 tostring cod_eve, replace
 tostring fec_not, replace
 tostring semana, replace
@@ -5463,7 +5463,7 @@ append using "dengue_20142015_cali.dta", generate(chikv2015)
 save "dengue_chkv_20142015_cali.dta", replace
 */
 *merge based on COD_BARRIO 
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\barrios.xls", sheet("barrios") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\barrios.xls", sheet("barrios") firstrow clear
 *add 9999 and 900 to barrios
 set obs `=_N+1'
 replace COD_BARRIO = "900 " in 339
@@ -5484,7 +5484,7 @@ drop if _merge==2
 
 save "chkvdenguebarriosmerged.dta", replace
 
-cd "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
+cd "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
 capture log close 
 log using "dissertation.smcl", text replace 
 set scrollbufsize 100000
@@ -5497,7 +5497,7 @@ save "chkvdenguebarriosmerged.dta", replace
 */
 
 *now add the zika data and create a second Z_ID_CODE to maintain the origional ID_CODE integrity and have a new one to match
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\d_ch_z_SEPT_2015_2016_ICESI.xls", sheet("Hoja1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\d_ch_z_SEPT_2015_2016_ICESI.xls", sheet("Hoja1") firstrow clear
 save "d_ch_z_SEPT_2015_2016_ICESI.dta", replace
 tostring fec_not, replace
 /*append using "chkvdenguebarriosmerged.dta"
@@ -5564,7 +5564,7 @@ rename zikabarrio variabl_zikabarrio
 *export number of cases by barrio
 bysort COD_BARRIO: gen freq_COD_BARRIO = _N
 tabdisp COD_BARRIO, c(freq_COD_BARRIO NOMBRE ESTRATO_MO)
-export excel freq_COD_BARRIO NOMBRE COD_BARRIO using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\diseasefreq_Barrio.xls", firstrow(variables) replace
+export excel freq_COD_BARRIO NOMBRE COD_BARRIO using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\diseasefreq_Barrio.xls", firstrow(variables) replace
 
 *standardize home addresses
 gen manipadrsH = " "
@@ -6064,13 +6064,13 @@ save temp.dta, replace
 
 *From HERE
 /*********************************
- *Amy Krystosik                  *
+ *Amykr Krystosik                  *
  *chikv and dengue in cali       *
  *dissertation                   *
  *last updated December 1, 2015  *
  *********************************/
 
-cd "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
+cd "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
 capture log close 
 log using "dissertation_fromHERE.smcl", text replace 
 set scrollbufsize 100000
@@ -6651,7 +6651,7 @@ sort ID_CODE, stable
 sort NOMBRE, stable
 
 *export to excel a coopy
-export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\byhand.xls", firstrow(variables) replace
+export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\byhand.xls", firstrow(variables) replace
 
 /*
 *manual edits in stata edit window
@@ -10449,13 +10449,13 @@ save temp.dta, replace
 
 *From HERE
 /*********************************
- *Amy Krystosik                  *
+ *Amykr Krystosik                  *
  *chikv and dengue in cali       *
  *dissertation                   *
  *last updated January 3, 2016  *
  *********************************/
 
-cd "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
+cd "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data"
 capture log close 
 log using "dissertation_fromHERE.smcl", text replace 
 set scrollbufsize 100000
@@ -10469,7 +10469,7 @@ bysort  num_ide_  fec_not cod_eve: gen freq_cedula = _N
 sort num_ide_   fec_not direcion cod_eve
 quietly by num_ide_  fec_not direcion cod_eve:  gen dup = cond(_N==1,0,_n)
 tabulate dup
-export excel num_ide_ cod_eve direcion barrio dir_res_  fec_not freq_cedula dup using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\freq_cedula.xls", firstrow(variables) replace
+export excel num_ide_ cod_eve direcion barrio dir_res_  fec_not freq_cedula dup using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\freq_cedula.xls", firstrow(variables) replace
 drop if dup>1
 bysort  num_ide_  fec_not cod_eve: gen freq_cedula2 = _N
 
@@ -10611,7 +10611,7 @@ bysort  num_ide_  fec_not cod_eve: gen freq_cedula = _N
 sort num_ide_   fec_not direcion clasfinal cod_eve
 quietly by num_ide_  fec_not direcion clasfinal cod_eve:  gen dup = cond(_N==1,0,_n)
 tabulate dup
-export excel num_ide_ cod_eve direcion clasfinal barrio dir_res_  fec_not freq_cedula dup using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\freq_cedula.xls", firstrow(variables) replace
+export excel num_ide_ cod_eve direcion clasfinal barrio dir_res_  fec_not freq_cedula dup using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\freq_cedula.xls", firstrow(variables) replace
 drop if dup>1
 
 bysort  num_ide_  fec_not cod_eve: gen freq_cedula2 = _N
@@ -10678,16 +10678,16 @@ tab gp_gestan
 *tab nom_eve
 drop count -  dup4
 /*
-*outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap.csv", comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\alldata.csv", comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_2000.csv" in 1/2000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_4000.csv" in 2001/4000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_6000.csv" in 4001/6000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_8000.csv" in 6001/8000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_10000.csv" in 8001/10000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_12000.csv" in 10001/12000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_14000.csv" in 12001/14000, comma replace
-outsheet using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_16000.csv" in 14001/15712, comma replace
+*outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap.csv", comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\alldata.csv", comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_2000.csv" in 1/2000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_4000.csv" in 2001/4000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_6000.csv" in 4001/6000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_8000.csv" in 6001/8000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_10000.csv" in 8001/10000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_12000.csv" in 10001/12000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_14000.csv" in 12001/14000, comma replace
+outsheet using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\redcap_16000.csv" in 14001/15712, comma replace
 */
 *export for secretary of healtlh geocoding
 rename direcion direccion
@@ -10706,7 +10706,7 @@ gen ID_CODE_merged = _n
 
 /*
 *merge based on those that didn't georeference to include the neighborhood
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\sin_georreferenciar.xls", sheet("sin_georreferenciar") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\sin_georreferenciar.xls", sheet("sin_georreferenciar") firstrow clear
 save "sin_georreferenciar.dta", replace
 
 use "temp.dta", clear
@@ -10725,7 +10725,7 @@ drop if ID_CODE ==" "
 drop if ID_CODE ==""
 save "temp_nozika.dta", replace
 
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\singeoreferenciar\sin_georreferenciar_javier.xls", sheet("Sheet1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\singeoreferenciar\sin_georreferenciar_javier.xls", sheet("Sheet1") firstrow clear
 save "sin_georreferenciar_javier.dta", replace
 drop if ID_CODE =="."
 drop if ID_CODE ==" "
@@ -10915,14 +10915,14 @@ rename gp_otros other_group
 rename sexo_ Sex
 
 *table 1 for all cases by outcome where 0 is chkv, 1 is dengue without warning signs, 2 is dengue with warning signs, 3 is denuge grave, 4 is dengue death
-table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \ Disabled cat \ Displaced cat\migrant cat\ pregnant cat\ youth_government_care  cat\ Community_mother  cat \ ex_paramil_ex_guerilla cat\ under_psychiatric_care  cat\ other_group  cat\ violence_victims cat) by(nom_eve) saving("C:\Users\Amy\OneDrive\epi analysis\table1_nom_eve_age5.xls", replace) missing
-table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \ Disabled cat \ Displaced cat\migrant cat\ pregnant cat\ youth_government_care  cat\ Community_mother  cat \ ex_paramil_ex_guerilla cat\ under_psychiatric_care  cat\ other_group  cat\ violence_victims cat) by(nom_eve) saving("C:\Users\Amy\OneDrive\epi analysis\table1_nom_eve_ageepi.xls", replace) missing
+table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \ Disabled cat \ Displaced cat\migrant cat\ pregnant cat\ youth_government_care  cat\ Community_mother  cat \ ex_paramil_ex_guerilla cat\ under_psychiatric_care  cat\ other_group  cat\ violence_victims cat) by(nom_eve) saving("C:\Users\Amykr\OneDrive\epi analysis\table1_nom_eve_age5.xls", replace) missing
+table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \ Disabled cat \ Displaced cat\migrant cat\ pregnant cat\ youth_government_care  cat\ Community_mother  cat \ ex_paramil_ex_guerilla cat\ under_psychiatric_care  cat\ other_group  cat\ violence_victims cat) by(nom_eve) saving("C:\Users\Amykr\OneDrive\epi analysis\table1_nom_eve_ageepi.xls", replace) missing
 
 bysort female: tab Age_Categories nom_eve
 bysort female year: tab Age_Categories nom_eve
 
 egen sexoutcome = concat(Sex outcome)
-table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \ Disabled cat \ Displaced cat\migrant cat\ pregnant cat\ youth_government_care  cat\ Community_mother  cat \ ex_paramil_ex_guerilla cat\ under_psychiatric_care  cat\ other_group  cat\ violence_victims cat) by(sexoutcome) saving("C:\Users\Amy\OneDrive\epi analysis\table1_nom_eve_ageepi.xls", replace) missing
+table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \ Disabled cat \ Displaced cat\migrant cat\ pregnant cat\ youth_government_care  cat\ Community_mother  cat \ ex_paramil_ex_guerilla cat\ under_psychiatric_care  cat\ other_group  cat\ violence_victims cat) by(sexoutcome) saving("C:\Users\Amykr\OneDrive\epi analysis\table1_nom_eve_ageepi.xls", replace) missing
 
 save cases.dta, replace
 *chikv
@@ -11018,17 +11018,17 @@ tab nom_eve if ano == 2014 & semana <= 40
 drop if ano == 2014 & semana <= 40
 
 
-save "C:\Users\Amy\OneDrive\epi analysis\temp.dta", replace
+save "C:\Users\Amykr\OneDrive\epi analysis\temp.dta", replace
 
 
 /****************************************************
- *Amy Krystosik                  					*
+ *Amykr Krystosik                  					*
  *chikv, dengue, and zika in cali, colombia       	*
  *PHD dissertation                   				*
  *last updated July 7, 2016  						*
  ***************************************************/
-use "C:\Users\Amy\OneDrive\epi analysis\temp.dta", clear
-cd "C:\Users\Amy\OneDrive\epi analysis" 
+use "C:\Users\Amykr\OneDrive\epi analysis\temp.dta", clear
+cd "C:\Users\Amykr\OneDrive\epi analysis" 
 capture log close 
 log using "dissertation.smcl", text replace 
 set scrollbufsize 100000
@@ -11053,18 +11053,18 @@ tostring CODIGO, replace
 *drop variables we don't use in analysis
 drop direccion dir_res_ freq_cedula4 freq_cedula2 ID_CODE localidad_ nom_upgd ndep_proce nmun_proce ndep_resi nmun_resi COD_COMUNA AREA PERIMETRO estrato_mo ACUERDO LIMITES dengue dengue_status dengue_death1 dengue_death2 dengue_death3 dengue_death4 chkv_status country append_merged direcionjavier clasfinal cod_pre cod_sub pri_nom_ seg_nom_ pri_ape_ seg_ape_ tip_ide_ cod_pais_o cod_dpto_o cod_mun_o area_ cen_pobla_ vereda_ tip_ss_ cod_ase_ cod_dpto_r cod_mun_r fec_con_ tip_cas_ tip_cas_num fec_hos_ con_fin_ fec_def_ ajuste_ adjustment_num telefono_ cer_def_ cbmte_ nuni_modif fec_arc_xl nom_dil_f_ tel_dil_f_ fec_aju_ fm_fuerza fm_unidad fm_grado nmun_notif ndep_notif nreg chikv2015 control fec_exp nit_upgd cod_mun_d famantdngu direclabor fiebre cefalea dolrretroo malgias artralgia erupcionr dolor_abdo vomito diarrea somnolenci hipotensio hepatomeg hem_mucosa hipotermia caida_plaq acum_liqui aum_hemato extravasac hemorr_hem choque dao_organ muesttejid mueshigado muesbazo muespulmon muescerebr muesmiocar muesmedula muesrion classfinal_num conducta append20142015 merged sex1 sex2 freq_cedula dup
 *export raw data
-save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
+save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
 save "dengue_chikv_oct2014-oct2015_cali.dta", replace
-export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\dengue_chikv_zika_oct2014-abril2016_cali.xls", firstrow(variables) replace
+export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\dengue_chikv_zika_oct2014-abril2016_cali.xls", firstrow(variables) replace
 export excel using "dengue_chikv_zika_oct2014-abril2016_cali.xls", firstrow(variables) replace
 
 *export the new addresses for javier/*export for secretary of healtlh geocoding
-export excel CODIGO ID_CODE direccion dir_res_ barrio ID_BARRIO using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\direcciones_krystosik_5mayo2016B", firstrow(variables) replace
+export excel CODIGO ID_CODE direccion dir_res_ barrio ID_BARRIO using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\direcciones_krystosik_5mayo2016B", firstrow(variables) replace
 export excel CODIGO ID_CODE direccion dir_res_ barrio ID_BARRIO using "direcciones_krystosik_5mayo2016B", firstrow(variables) replace
 
 **incidence**
 *pop standardization incidence by agecat5 and sex. 
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali.xls", sheet("Sheet1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali.xls", sheet("Sheet1") firstrow clear
 tostring stratavar_age, replace
 
 gen popvar_weighted = .
@@ -11081,13 +11081,13 @@ rename stratavars_year anos
 rename stratavars_female female 
 rename stratavar_age Age_Categories 
 
-save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\pop cali age sex.dta", replace
+save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\pop cali age sex.dta", replace
 
-use "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
+use "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
 tostring Age_Categories, replace
 destring anos, replace
-merge m:1 anos female Age_Categories using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\pop cali age sex.dta"
-save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases.dta", replace
+merge m:1 anos female Age_Categories using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\pop cali age sex.dta"
+save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases.dta", replace
 
 gen popvar_weighted = .
 replace popvar_weighted = popvar*(14/52) if stratavars_year == 2014
@@ -11103,17 +11103,17 @@ rename stratavars_year anos
 rename stratavars_female female 
 rename stratavar_age Age_Categories 
 
-save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\pop cali age sex.dta", replace
+save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\pop cali age sex.dta", replace
 
-use "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
+use "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
 tostring Age_Categories, replace
 destring anos, replace
-merge m:1 anos female Age_Categories using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\pop cali age sex.dta"
-save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases.dta", replace
+merge m:1 anos female Age_Categories using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\pop cali age sex.dta"
+save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases.dta", replace
 
 
 *pop standardization incidence by agecatepi and sex. 
-import excel "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.xls", sheet("Sheet1") firstrow clear
+import excel "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.xls", sheet("Sheet1") firstrow clear
 tostring stratavar_age, replace
 collapse (sum) popvar, by(stratavars_year stratavars_female stratavar_age)
 
@@ -11131,13 +11131,13 @@ rename stratavars_year anos
 rename stratavars_female female 
 rename stratavar_age Age_Categories 
 
-save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta", replace
+save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta", replace
 
-use "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
+use "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
 tostring Age_Categories, replace
 destring anos, replace
-merge m:1 anos female Age_Categories using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta"
-save "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases_epiagecats.dta", replace
+merge m:1 anos female Age_Categories using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta"
+save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases_epiagecats.dta", replace
 
 *crude incidence table by age
 gen casecount = 1
@@ -11149,10 +11149,10 @@ order stratavars_year stratavars_female stratavar_age casecount crudeincidence p
 collapse (mean) crudeincidencesum, by(stratavars_year stratavars_female stratavar_age nom_eve)
 gen crudeincidence1000000 = crudeincidencesum*100000
 *bysort nom_eve stratavars_year stratavars_female stratavar_age: tab crudeincidence1000000
-export excel using "C:\Users\Amy\OneDrive\epi analysis\incidence.xls", firstrow(variables) replace
+export excel using "C:\Users\Amykr\OneDrive\epi analysis\incidence.xls", firstrow(variables) replace
 
 ************pop weighted incidence table by age****************
-use "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases.dta", replace
+use "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases.dta", replace
 gen casecount = 1
 gen incidenceweighted = .
 replace incidenceweighted = casecount/ popvar_weighted
@@ -11183,8 +11183,8 @@ replace labpositive = 0 if result10 == 1
 
 egen pregnant_females = concat  (pregnant  stratavars_female)
 *table 1 for all cases by outcome where 0 is chkv, 1 is dengue without warning signs, 2 is dengue with warning signs, 3 is denuge grave, 4 is dengue death
-table1, vars(stratavar_age cat\ stratavars_female cat \ ethnicity cat \confirmed cat \labpositive cat\ Disabled cat \ Displaced cat \gp_migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(nom_eve) saving("C:\Users\Amy\OneDrive\epi analysis\table1_nom_eve_confirmed.xls", replace) missing 
-table1, vars(stratavar_age cat\ stratavars_female cat \ ethnicity cat \confirmed cat \labpositive cat\ Disabled cat \ Displaced cat \gp_migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(nom_eve) saving("C:\Users\Amy\OneDrive\epi analysis\table1_nom_eve_confirmed.xls", replace) missing 
+table1, vars(stratavar_age cat\ stratavars_female cat \ ethnicity cat \confirmed cat \labpositive cat\ Disabled cat \ Displaced cat \gp_migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(nom_eve) saving("C:\Users\Amykr\OneDrive\epi analysis\table1_nom_eve_confirmed.xls", replace) missing 
+table1, vars(stratavar_age cat\ stratavars_female cat \ ethnicity cat \confirmed cat \labpositive cat\ Disabled cat \ Displaced cat \gp_migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(nom_eve) saving("C:\Users\Amykr\OneDrive\epi analysis\table1_nom_eve_confirmed.xls", replace) missing 
 
 *table
 egen weightedincidencesum = sum(incidenceweighted), by(stratavars_year stratavars_female stratavar_age nom_eve)
@@ -11199,9 +11199,9 @@ gen lower = .
 replace lower = ratioftom - 1.96*sqrt((1/weightedincidencemale)  + (1/weightedincidencefemale))
 gen upper = .
 replace upper = ratioftom + 1.96*sqrt((1/weightedincidencemale)  + (1/weightedincidencefemale))
-export excel using "C:\Users\Amy\OneDrive\epi analysis\weightedincidenceratios.xls", firstrow(variables) replace
+export excel using "C:\Users\Amykr\OneDrive\epi analysis\weightedincidenceratios.xls", firstrow(variables) replace
 
-use "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
+use "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
 *confirmed vs suspected
 tab resultado, gen(result)
 gen confirmed = .
@@ -11236,29 +11236,29 @@ replace quarter = 2 if semana >13 & semana<= 26
 replace quarter = 3 if semana >26 & semana <= 39
 replace quarter = 4 if semana >39
 
-export excel using "C:\Users\Amy\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\dengue_chikv_zika_oct2014-abril2016_cali", firstrow(variables) replace
+export excel using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\dengue_chikv_zika_oct2014-abril2016_cali", firstrow(variables) replace
 export excel using "dengue_chikv_zika_oct2014-abril2016_cali", firstrow(variables) replace
 
 ****incidence per 100,000 by barrio*****
 *pop standardization incidence
 *make population by barrio dataset.
-import excel "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.xls", sheet("barrio sex") firstrow clear
+import excel "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.xls", sheet("barrio sex") firstrow clear
 *tostring stratavar_age, replace
 gen popvar_weighted_chik_barrio = .
 replace popvar_weighted_chik_barrio = Population
 gen str4 ID_barrio4 = string(ID_BARRIO,"%04.0f")
-save "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.dta", replace
+save "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.dta", replace
 save "population bario cali.dta", replace
 
 **use the cases spatially merged to barrio from arcgis becuase not all data has barrio from sec of health. 
 *chikv*
-import excel "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\chikvprojected_barrio.xls", sheet("chikvprojected_barrio") firstrow clear
-save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barrios_chikv_TableToExcel.dta", replace
+import excel "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\chikvprojected_barrio.xls", sheet("chikvprojected_barrio") firstrow clear
+save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barrios_chikv_TableToExcel.dta", replace
 save "barrios_chikv_TableToExcel.dta", replace
 destring ID_BARRIO, replace
 gen str4 ID_barrio4 = string(ID_BARRIO,"%04.0f")
-merge m:1 ID_barrio4 using "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.dta"
-save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barriopopulation_chikv.dta", replace
+merge m:1 ID_barrio4 using "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.dta"
+save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barriopopulation_chikv.dta", replace
 save "barriopopulation_chikv.dta", replace
 *crude incidence table by age and barrio
 gen casecount_barrio = 1
@@ -11269,17 +11269,17 @@ egen crudeincidence_barriosum = sum(crudeincidence_barrio), by(ID_barrio4)
 collapse (mean) crudeincidence_barriosum, by(ID_barrio4) 
 gen crudeincidence_barriosum1000000 = crudeincidence_barriosum*100000
 *bysort nom_eve ID_BARRIO: tab crudeincidence_barriosum1000000
-export excel using "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\chikv_barrio.xls", firstrow(variables) replace
+export excel using "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\chikv_barrio.xls", firstrow(variables) replace
 export excel using "chikv_barrio.xls", firstrow(variables) replace
 
 *dengue*
-import excel "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\dengue_projected_barrio.xls", sheet("dengue_projected_barrio") firstrow clear
-save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barrios_dengue_TableToExcel.dta", replace
+import excel "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\dengue_projected_barrio.xls", sheet("dengue_projected_barrio") firstrow clear
+save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barrios_dengue_TableToExcel.dta", replace
 save "barrios_dengue_TableToExcel.dta", replace
 destring ID_BARRIO, replace
 gen str4 ID_barrio4 = string(ID_BARRIO,"%04.0f")
-merge m:1 ID_barrio4 using "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.dta"
-save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barriopopulation_dengue.dta", replace
+merge m:1 ID_barrio4 using "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.dta"
+save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barriopopulation_dengue.dta", replace
 save "barriopopulation_dengue.dta", replace
 *crude incidence table by age and barrio
 gen casecount_barrio = 1
@@ -11290,17 +11290,17 @@ egen crudeincidence_barriosum = sum(crudeincidence_barrio), by(ID_barrio4)
 collapse (mean) crudeincidence_barriosum, by(ID_barrio4) 
 gen crudeincidence_barriosum1000000 = crudeincidence_barriosum*100000
 *bysort nom_eve ID_BARRIO: tab crudeincidence_barriosum1000000
-export excel using "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\dengue_barrio.xls", firstrow(variables) replace
+export excel using "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\dengue_barrio.xls", firstrow(variables) replace
 export excel using "dengue_barrio.xls", firstrow(variables) replace
 
 *zika*
-import excel "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\zikaprojected_barrio.xls", sheet("zikaprojected_barrio") firstrow clear
-save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barrios_zika_TableToExcel.dta", replace
+import excel "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\zikaprojected_barrio.xls", sheet("zikaprojected_barrio") firstrow clear
+save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barrios_zika_TableToExcel.dta", replace
 save "barrios_zika_TableToExcel.dta", replace
 destring ID_BARRIO, replace
 gen str4 ID_barrio4 = string(ID_BARRIO,"%04.0f")
-merge m:1 ID_barrio4 using "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.dta" 
-save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barriopopulation_zika.dta", replace
+merge m:1 ID_barrio4 using "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.dta" 
+save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barriopopulation_zika.dta", replace
 save "barriopopulation_zika.dta", replace
 *crude incidence table by age and barrio
 gen casecount_barrio = 1
@@ -11311,20 +11311,20 @@ egen crudeincidence_barriosum = sum(crudeincidence_barrio), by(ID_barrio4)
 collapse (mean) crudeincidence_barriosum, by(ID_barrio4) 
 gen crudeincidence_barriosum1000000 = crudeincidence_barriosum*100000
 *bysort nom_eve ID_BARRIO: tab crudeincidence_barriosum1000000
-export excel using "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\zika_barrio.xls", firstrow(variables) replace
+export excel using "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\zika_barrio.xls", firstrow(variables) replace
 export excel using "zika_barrio.xls", firstrow(variables) replace
 
 /*
 **all disease**
-import excel "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\cases_projected_barrio.xls", sheet("cases_barrio") firstrow clear
-save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\cases_barrio.dta", replace
-save "C:\Users\Amy\OneDrive\epi analysis\cases_barrio.dta", replace
+import excel "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\cases_projected_barrio.xls", sheet("cases_barrio") firstrow clear
+save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\cases_barrio.dta", replace
+save "C:\Users\Amykr\OneDrive\epi analysis\cases_barrio.dta", replace
 *rename ID_BARRIO ID_barrio4
 destring ID_BARRIO, replace
 gen str4 ID_barrio4 = string(ID_BARRIO,"%04.0f")
 *rename Sheet1__nom_eve nom_eve
-merge m:1 ID_barrio4 using "C:\Users\Amy\OneDrive\epi analysis\population\population bario cali.dta" 
-save "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\barriopopulation_cases.dta", replace
+merge m:1 ID_barrio4 using "C:\Users\Amykr\OneDrive\epi analysis\population\population bario cali.dta" 
+save "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\barriopopulation_cases.dta", replace
 *crude incidence table by age and barrio
 gen casecount_barrio = 1
 gen crudeincidence_barrio = .
@@ -11341,6 +11341,6 @@ replace disease = "dengue" if nom_eve == 220
 replace disease = "dengue" if nom_eve == 580
 replace disease = "chik" if nom_eve == 217
 replace disease = "zika" if nom_eve == 895
-export excel using "C:\Users\Amy\OneDrive\epi analysis\diseasebarrio\cases_barrio_nom_eve.xls", firstrow(variables) replace
+export excel using "C:\Users\Amykr\OneDrive\epi analysis\diseasebarrio\cases_barrio_nom_eve.xls", firstrow(variables) replace
 */
 **tomorrow work on the incidence tables and maps***

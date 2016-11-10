@@ -17,7 +17,7 @@ set more 1
 
 **delete repeat observatrions (same id within one week).
 *data cleaning
-*drop freq_cedula
+capture  drop freq_cedula dup
 bysort  num_ide_ fec_not nom_eve: gen freq_cedula = _N
 sort num_ide_ fec_not nom_eve
 quietly by num_ide_ fec_not nom_eve:  gen dup = cond(_N==1,0,_n)
@@ -63,13 +63,14 @@ tostring CODIGO, replace
 		rename stratavars_year anos 
 		rename stratavars_female female 
 		rename stratavar_age edad_cat_epi 
-
+capture drop _merge
 		save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta", replace
 
 		use "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\municipal data\origionals\dengue_chikv_oct2014-oct2015_cali.dta", replace
 		tostring Age_Categories, replace
 		destring anos, replace
 		tostring edad_cat_epi, replace
+		capture drop _merge
 		merge m:1 anos female edad_cat_epi using "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population\population year sex cali_epiagecats.dta"
 		save "C:\Users\Amykr\Google Drive\Kent\james\dissertation\chkv and dengue\data\population_cases_epiagecats.dta", replace
 
@@ -146,13 +147,47 @@ capture drop outcome_collapsed_2
 	*outcome = 7  for zika
 	replace outcome_collapsed_2 = 7 if outcome == 7 
 
+	
+	save temp.dta, replace
+	
+	foreach var in Age_Categories Sex Lab_result  pregnant_females outcome_collapsed{
+	encode `var', gen(`var'2)
+	drop `var'
+	rename `var'2 `var'
+	}
+	
+	
+	foreach var in 	Age_Categories Sex Lab_result  pregnant_females outcome_collapsed ethnicity confirmed Disabled Displaced migrant pregnant youth_government_care Community_mother ex_paramil_ex_guerilla under_psychiatric_care other_group violence_victims {
+	histogram `var'
+	graph export histogram`'.tif, replace
+	tab `var'
+	}
+
+	
+	
+	
+	replace outcome_collapsed  = 2 if outcome_collapsed ==3
+	
+	levelsof outcome_collapsed, local(disease)
+	di "`disease'"
+	 foreach l of local disease{
+		di "Disease:  `l'"
+		
+preserve
+	*keep if outcome_collapsed==`l'
 *tables with collapsed (dengue grave and dengue death) outcome with and without the strata for dengue with warning signs.
-	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(outcome_collapsed) saving("table1_outcome_collapsed.xls", replace ) missing test
-	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(outcome_collapsed_2) saving("table1_outcome_collapsed.xls", replace ) missing test
-*table 1 for all cases by outcome where nom event is: Chikungunya	Dengue	Severe Dengue & Mortality	Zika
-	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(nom_eve) saving("C:\Users\Amykr\OneDrive\epi analysis\table1_nom_eve_confirmed.xls", replace) missing test
-*table 1 for all cases by outcome where 0 is chkv, 1 is dengue without warning signs, 2 is dengue with warning signs, 3 is denuge grave, 4 is dengue death
-	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ other_group cat \ violence_victims cat) by(outcome) saving("C:\Users\Amykr\OneDrive\epi analysis\table1_OUTCOME_confirmed.xls", replace) missing test 
+	table1, vars(Age_Categories cat\ Sex cat \ ethnicity cat \confirmed cat \Lab_result  cat\ Disabled cat \ Displaced cat \migrant cat \ pregnant cat \ pregnant_females cat \ youth_government_care cat \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cat \ violence_victims cat\ other_group cat\ ) by(outcome_collapsed_2) saving("table1_outcome_collapsed`l'.xls", replace ) missing test
+restore
+	}	
+
+
+	preserve
+
+		keep if outcome_collapsed==2|outcome_collapsed==3
+		table1, vars(Age_Categories cat\ Sex cat \ ethnicity cate \confirmed cate \Lab_result  cate\ Disabled cate \ Displaced cate 	\migrant cate \ pregnant cate \ pregnant_females cate \ youth_government_care cate \ Community_mother cat \ ex_paramil_ex_guerilla cat \ under_psychiatric_care cate \ violence_victims cate\ other_group cate\ ) by(outcome_collapsed_2) saving("table1_outcome_collapsed_dengue3.xls", replace ) missing test
+	
+	restore
+	
 
 save temp2.dta, replace
 
