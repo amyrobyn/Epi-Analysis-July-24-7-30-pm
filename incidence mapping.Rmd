@@ -1,0 +1,737 @@
+setwd("C:/Users/amykr/Desktop/rworkshop/feb13")
+---
+title: "Making maps in R"
+author: "Amy Krystosik"
+date: "Last updated: `r format(Sys.time(), '%B %d, %Y')`"
+output: 
+  html_notebook:
+    code_folding: hide
+    fig_caption: no
+    toc: yes
+    toc_depth: 4
+---
+```{r setup, include=FALSE}
+## libraries needed for R code examples
+install.packages(c("sp", "sf", "rgdal", "classInt", "RColorBrewer", "ggplot", "ggmap", "leaflet", "broom", "tmap", "GISTools"))
+library(sp)
+library(sf)
+library(rgdal)
+library(classInt)
+library(RColorBrewer)
+library(ggplot2)
+library(ggmap)
+library(leaflet)
+library(broom)
+library(tmap)
+library(GISTools)
+
+# need this file for later
+
+denv_c<-read.csv("C:/Users/amykr/Google Drive/Kent/james/dissertation/chkv and dengue/arcgis analysis/gwr models/output/gwr4nov16/dengue/dengue_c_collapsed.csv")%>%filter(codigo_barrio!=2300)
+denv_c$denv_c_inc<-denv_c$dengue_c_sum/denv_c$total_pop
+denv_c$denv_c_inc_100000<-(denv_c$dengue_c_sum/denv_c$total_pop)*100000
+table(denv_c$denv_c_inc_100000)
+chikvincidence <- read.csv("C:/Users/amykr/OneDrive/epi analysis/diseasebarrio/chikv_barriofeb202017.csv", header=TRUE)
+
+denvincidence <- read.csv("C:/Users/amykr/OneDrive/epi analysis/diseasebarrio/dengue_barriofeb202017.csv", header=TRUE)
+
+zikaincidence <- read.csv("C:/Users/amykr/OneDrive/epi analysis/diseasebarrio/zika_barriofeb202017.csv", header=TRUE)
+
+
+library(stringr)
+zikaincidence$ID_barrio4<-str_pad(zikaincidence$ID_barrio4, 4, pad = "0")
+denv_c$ID_barrio4<-str_pad(denv_c$codigo_barrio, 4, pad = "0")
+barrios <- readOGR("C:/Users/amykr/Google Drive/Kent/james/dissertation/chkv and dengue/arcgis analysis/data/avg_rain.gdb", "barrioswgs1984", verbose = F)
+
+chikvincidence <- merge(barrios,chikvincidence, by.x='ID_BARRIO', by.y='ID_barrio4')
+denvincidence <- merge(barrios,denvincidence, by.x='ID_BARRIO', by.y='ID_barrio4')
+denv_c_incidence <- merge(barrios,denv_c, by.x='ID_BARRIO', by.y='ID_barrio4')
+zikaincidence <- merge(barrios,zikaincidence, by.x='ID_BARRIO', by.y='ID_barrio4')
+
+
+install.packages(c("rgdal", "sp"))
+library(rgdal)
+library(sp)
+writeOGR(zikaincidence, "C:/Users/amykr/OneDrive/epi paper/figures/editable map shapefiles", "zika", driver = "ESRI Shapefile")
+save(zikaincidence, file="C:/Users/amykr/OneDrive/epi paper/figures/editable map shapefiles/zikaincidence.R")        # save to the working directory
+
+writeOGR(denvincidence, "C:/Users/amykr/OneDrive/epi paper/figures/editable map shapefiles", "denv", driver = "ESRI Shapefile")
+save(denvincidence, file="C:/Users/amykr/OneDrive/epi paper/figures/editable map shapefiles/denvincidence.R")        # save to the working directory
+
+writeOGR(denv_c_incidence, "C:/Users/amykr/Box Sync/Amy Krystosik's Files/cali- epi of arboviruses/epi paper/figures/Figure 3 editable shapefiles and spatial objects and code", "denv_c_incidence", driver = "ESRI Shapefile")
+save(denv_c_incidence, file="C:/Users/amykr/Box Sync/Amy Krystosik's Files/cali- epi of arboviruses/epi paper/figures/Figure 3 editable shapefiles and spatial objects and code/denv_c_incidence.R")        # save to the working directory
+
+writeOGR(chikvincidence, "C:/Users/amykr/OneDrive/epi paper/figures/editable map shapefiles", "chikv", driver = "ESRI Shapefile")
+save(chikvincidence, file="C:/Users/amykr/OneDrive/epi paper/figures/editable map shapefiles/chikvincidence.R")        # save to the working directory
+
+load(file="C:/Users/amykr/OneDrive/epi paper/figures/editable map shapefiles/denvincidence.R")
+load(file="C:/Users/amykr/OneDrive/epi paper/figures/editable map shapefiles/chikvincidence.R")
+load(file="C:/Users/amykr/OneDrive/epi paper/figures/editable map shapefiles/zikaincidence.R")
+
+
+```
+crudeincidence_barriosum1000000# 1. Choropleth mapping with `spplot` 
+
+`sp` comes with a plot command `spplot()`, which takes `Spatial*` objects to plot. `spplot()` is one of the older functions to plot geographic objects.
+
+***
+### Exercise 1
+
+1. Use `readOGR()` from the `rgdal` libryary to read the `Philly3` shapefile into an object named `philly`.
+
+2. Use `names()` to see the attributes. I have added the following fields:
+
+* _N_HOMIC_: Number of homicides (since 2006)
+* _HOMIC_R_: homicide rate per 100,000 (Philadelphia Open Data)
+* _PCT_COL_: % 25 years and older with college or higher degree[^1] (ACS 2006-2010)
+* _mdHHnc_: estimated median household income (ACS 2006-2010)
+
+[^1]: Higher degrees are: Associate's, Bachelor's, Master's, Professional school, Doctorate
+
+3. Use the base `plot` command and see what you get.
+
+```{r eval=FALSE}
+plot (chikvincidence)
+```
+
+4. Use the `spplot` command (make sure you installed and loaded `sp`) and compare.
+
+```{r eval=FALSE}
+
+spplot(chikvincidence, "crudeincidence_barriosum1000", main = "Chikunguya (incidence per 1,000)")
+spplot(denvincidence, "crudeincidence_barriosum1000", main = "Dengue (incidence per 1,000)")
+spplot(zikaincidence, "crudeincidence_barriosum1000", main = "Zika (incidence per 1,000)")
+
+
+5. Not particularly useful for any interpretation.  
+
+    You can see that by default `spplot` tries to map everything it can find in the attribute table. Sometimes, even this does not work, depending on the data types in the attribute table. It also uses one classification for all the maps. (The latter actually makes sense, as otherwise you'd be likely to compare apples with oranges.)  
+
+    In order to select specific values to map we can provide the `spplot` function with the name (or names) of the attribute variable we want to plot. It is the name of the column of the `Spatial*Dataframe` as character string (or a vector if several).     
+
+    Try that.
+
+```{r eval=FALSE}
+spplot(philly,"HOMIC_R")
+# or
+spplot(philly,c("HOMIC_R", "PCT_COL"))
+```
+
+6. Let us stick with one variable for now and try to improve it a little.  
+First we want to change the color palette. For this we use a library called `RColorBrewer`[^2]. For more about ColorBrewer palettes read [this](http://colorbrewer2.org). Load the `RColorBrewer` library and explore all sequential color schemes with
+
+        display.brewer.all(type="seq")
+
+7. To make the color palettes from ColorBrewer available as R palettes we use `brewer.pal()` It takes two arguments:
+    - the number of different colors desired and 
+    - the name of the palette as character string. 
+    
+    Select 5 colors from the 'Orange-Red' plaette and assign it to an object `pal`. What kind of object is `pal`?
+
+```{r eval=FALSE}
+library(RColorBrewer)
+display.brewer.all(type="seq")
+pal <- brewer.pal(9, "YlOrRd") # we select 5 colors from the palette
+class(pal)
+```
+
+[^2]: This is not the only way to provide color palettes. You can create your customized palette in many different ways or simply as a vector of hexbin color codes, like `c( "#FDBB84" "#FC8D59" "#EF6548")`.
+
+8. Now we pass this information on to `spplot`. We need to provide two more arguments:
+    - `col.regions` which we set to the palette we just created and 
+    - `cuts` which in our case is 4. It bins our continous variable into 5 brackets and will make our colors match up with those class brackets.
+
+```{r eval=FALSE}
+spplot(denvincidence,"crudeincidence_barriosum1000", col.regions = pal, cuts = 8, main = "Dengue incidence per 1,000 population", sub = "(Nov '15 -Apr '16), Source: SIVIGILA, DANE") 
+spplot(chikvincidence,"crudeincidence_barriosum1000", col.regions = pal, cuts = 8, main = "Chikungunya incidence per 1,000 population", sub = "(Jan '15 -Apr '16)", Source: SIVIGILA, DANE) 
+spplot(zikaincidence,"crudeincidence_barriosum1000", col.regions = pal, cuts = 8, main = "Zika incidence per 1,000 population", sub = "(Nov '15 -Apr '16)", Source: SIVIGILA, DANE)
+
+```
+
+9. Looks better already. But we still have this one area standing out with an extremely high homicide rate, which makes a large part of the map unreadable. So let's change the class intervals to quantiles. We will use `classIntervals` from the `classInt` library, something like:
+
+        breaks_qt <- classIntervals(vector_of_values, 
+                                    n = how_many_classes, 
+                                    style = "quantile" [can be omitted -- the default])
+
+    This returns an object of type `classIntervals`. Find out its structure. How would you access the break values?
+
+```{r eval=FALSE}
+library(classInt)
+denv_breaks <- classIntervals(denvincidence$crudeincidence_barriosum1000, n = 9)
+str(denv_breaks)
+denv_breaks$brks
+
+chikv_breaks <- classIntervals(chikvincidence$crudeincidence_barriosum1000, n = 9)
+str(chikv_breaks)
+chikv_breaks$brks
+
+zika_breaks <- classIntervals(zikaincidence$crudeincidence_barriosum1000, n = 9)
+str(zika_breaks)
+zika_breaks$brks
+```
+
+10. Finally we use those breaks to set the `at=` argument in `spplot()`. Let's also set `main=` to add a title. 
+
+```{r eval=FALSE}
+spplot(denvincidence,"crudeincidence_barriosum1000", cuts = 8, col.regions = pal, at = denv_breaks$brks, main = "Dengue incidence per 1,000", sub = "(Nov '15 -Apr '16)") 
+spplot(chikvincidence,"crudeincidence_barriosum1000", cuts = 8, col.regions = pal, chikv_breaks$brks, main = "Chikungunya incidence per 1,000", sub = "(Jan '15 -Apr '16)") 
+spplot(zikaincidence,"crudeincidence_barriosum1000", cuts = 8, col.regions = pal, zika_breaks$brks, main = "Zika incidence per 1,000", sub = "(Nov '15 -Apr '16)")
+
+```
+
+11. If you now look closely you will see that there are a few blank polygons. Here are the steps to correct the breaks[^3].
+
+```{r eval=FALSE}
+# add a very small value to the top breakpoint, and subtract from the bottom for symmetry 
+zikabr <- zika_breaks$brks 
+offs <- 0.0000001 
+zikabr[1] <- zikabr[1] - offs 
+zikabr[length(zikabr)] <- zikabr[length(zikabr)] + offs 
+
+chikvbr <- chikv_breaks$brks 
+offs <- 0.0000001 
+chikvbr[1] <- chikvbr[1] - offs 
+chikvbr[length(chikvbr)] <- chikvbr[length(chikvbr)] + offs 
+
+denvbr <- denv_breaks$brks 
+offs <- 0.0000001 
+denvbr[1] <- denvbr[1] - offs 
+denvbr[length(denvbr)] <- denvbr[length(denvbr)] + offs 
+
+
+# plot
+spplot(philly, "HOMIC_R", col.regions=pal, at=br,  main = "Philadelphia homicide rate per 100,000")
+
+spplot(denvincidence,"crudeincidence_barriosum1000", cuts = 8, col.regions = pal, at = denvbr, main = "Dengue incidence per 1,000", sub = "(Nov '15 -Apr '16), Source: SIVIGILA & DANE") 
+spplot(chikvincidence,"crudeincidence_barriosum1000", cuts = 8, col.regions = pal, at = chikvbr, main = "Chikungunya incidence per 1,000", sub = "(Jan '15 -Apr '16), Source: SIVIGILA & DANE") 
+spplot(zikaincidence,"crudeincidence_barriosum1000", cuts = 8, col.regions = pal, at = zikabr, main = "Zika incidence per 1,000", sub = "(Nov '15 -Apr '16), Source: SIVIGILA & DANE")
+```
+
+12. The biggest remainig issue is the legend, which shows as a graduated color, since we provided a vector of continuous values to map. Here is how we can change this: 
+
+    - Use the `cut()` function from the base package with the values from `philly$HOMIC_R` and the corrected breaks `br` to return a vector with the respective boundaries of the brackets. Use `?cut` if you need help.
+    - Assign the output vector you get as a new column `HOMIC_R_bracket` to the `philly` attributes table. It will help to map the color based on the breaks. Take a look at the values. What object class is that vector?  
+    - Remove the `at=` parameter in `spplot()` (which is only needed for continuous variables) and tell it to plot `HOMIC_R_bracket`.  
+
+```{r eval=FALSE}
+denvincidence$crudeincidence_barriosum1000_bracket <- cut(denvincidence$crudeincidence_barriosum1000, denvbr)
+head(denvincidence$crudeincidence_barriosum1000_bracket )
+class(denvincidence$crudeincidence_barriosum1000_bracket )
+
+tiff("C:/Users/amykr/OneDrive/epi paper/figures/denvincidence.tiff", height = 12, width = 17, units = 'cm', compression = "lzw", res = 600)
+spplot(denvincidence, "crudeincidence_barriosum1000_bracket", col.regions=pal, main = "Dengue incidence per 1,000 population", sub = "Source: SIVIGILA & DANE, 11/2015 - 4/2016") 
+dev.off()
+
+chikvincidence$crudeincidence_barriosum1000_bracket <- cut(chikvincidence$crudeincidence_barriosum1000, chikvbr)
+tiff("C:/Users/amykr/OneDrive/epi paper/figures/chikvincidence.tiff", height = 12, width = 17, units = 'cm', compression = "lzw", res = 600)
+spplot(chikvincidence, "crudeincidence_barriosum1000_bracket", col.regions=pal, main = "Chikungunya incidence per 1,000 population", sub = "Source: SIVIGILA & DANE, 1/2015 - 4/2016")
+dev.off()
+
+zikaincidence$crudeincidence_barriosum1000_bracket <- cut(zikaincidence$crudeincidence_barriosum1000, zikabr)
+tiff("C:/Users/amykr/OneDrive/epi paper/figures/zikaincidence.tiff", height = 12, width = 17, units = 'cm', compression = "lzw", res = 600)
+spplot(zikaincidence, "crudeincidence_barriosum1000_bracket", col.regions=pal, main = "Zika incidence per 1,000 population", sub = "Source: SIVIGILA & DANE, 11/2015 - 4/2016")
+dev.off()
+```
+
+Now, this is what you should see:
+
+```{r echo=FALSE}
+philly <- readOGR("C:/Users/amykr/Desktop/rworkshop/feb13/Philly3/", "Philly3", verbose = F)
+pal <- brewer.pal(5, "OrRd")
+breaks_qt <- classIntervals(philly$HOMIC_R, n = 5, style = "quantile")
+br <- breaks_qt$brks 
+offs <- 0.0000001 
+br[1] <- br[1] - offs 
+br[length(br)] <- br[length(br)] + offs 
+philly$HOMIC_R_bracket <- cut(philly$HOMIC_R, br)
+spplot(philly, "HOMIC_R_bracket", col.regions=pal, main = "Philadelphia homicide rate per 100,000")
+```
+And below is the complete code:
+
+```{r eval=FALSE}
+library(rgdal)
+library(sp)
+library(RColorBrewer)
+library(classInt)
+philly <- readOGR("C:/Users/amykr/Desktop/rworkshop/feb13/Philly3", "Philly3") #
+pal <- brewer.pal(5, "OrRd")
+breaks_qt <- classIntervals(philly$HOMIC_R, n = 5, style = "quantile")
+br <- breaks_qt$brks 
+offs <- 0.0000001 
+br[1] <- br[1] - offs 
+br[length(br)] <- br[length(br)] + offs 
+philly$HOMIC_R_bracket <- cut(philly$HOMIC_R, br)
+spplot(philly, "HOMIC_R_bracket", col.regions=pal, main = "Philadelphia homicide rate per 100,000")
+```
+
+
+***
+
+There are many more arguments for this function to provide additional plot parameters, like the legend position, labels, scales, etc. 
+
+However, as you have seen, this can be quite tedious. 
+
+As an alternative you may want to be aware of the [`GISTools`](https://CRAN.R-project.org/package=GISTools) package. It includes functions, like `choropleth()` to draw choropleth that are really just convenience functions that wrap around `spplot()`
+
+Below is the code if you wanted to do a similar map as above with `GISTools`.
+
+```{r eval=FALSE}
+library(GISTools)                               # load library
+denvincidence$crudeincidence_barriosum1000 [denvincidence$crudeincidence_barriosum1000=NaN] <- 0
+choropleth(denvincidence, denvincidence$crudeincidence_barriosum1000, na.rm=TRUE)              # plot the polygons
+shd <-  auto.shading(denvincidence$crudeincidence_barriosum1000)            # we need that for the legend coloring
+choro.legend(                                   # plot the legend
+  bbox(philly)["x","max"] - 5000,               # x coordinate of top left corner
+  bbox(philly)["y","min"] + 15000,              # y coordinate of top left corner
+  shd                                           # color scheme
+  )                               
+title("Philadelphia homicide rate per 100,000") # plot the title.
+```
+
+```{r echo=FALSE, message=FALSE}
+choropleth(philly, philly$HOMIC_R)  # plot
+shd <-  auto.shading(philly$HOMIC_R)  # we need that for the legend
+choro.legend(bbox(philly)["x","max"] - 5000, bbox(philly)["y","min"] + 15000, shd) # add legend to plot
+title("Philadelphia homicide rate per 100,000") # add title.
+```
+
+
+**Plotting simple features (`sf`)**:
+
+The `sf` package extends the base `plot` command, so it can be used on `sf` objects. If used without any arguments it will plot all the attributes, like `spplot` does.
+
+```{r eval=FALSE}
+st_read
+library(sf)
+philly_sf <-  st_read("C:/Users/amykr/OneDrive/epi paper/figures/zika/layer name.shp")
+plot(philly_sf)
+```
+
+To plot a single attribute we need to provide an object of class `sf`, like so:
+
+```{r eval=FALSE}
+plot(philly_sf$HOMIC_R) # no-no
+plot(philly_sf["HOMIC_R"])
+```
+
+If we wanted to add our own colors, legend and title we would recur to basic plot parameters to do this.
+
+```{r eval=FALSE}
+hr_cuts <-  cut(philly_sf$HOMIC_R, br)
+plot(philly_sf["HOMIC_R"], main = "Philadelphia homicide rate per 100,000", col = pal[as.numeric(hr_cuts)])
+legend(1760000, 471000, legend = paste("<", round(br[-1])), fill = pal)                       
+```
+
+```{r echo=F, message=FALSE}
+
+philly_sf <-  st_read("C:/Users/amykr/Desktop/rworkshop/feb13/Philly3/Philly3.shp", quiet = T)
+hr_cuts <-  cut(philly_sf$HOMIC_R, br)
+plot(philly_sf["HOMIC_R"], main = "Philadelphia homicide rate per 100,000", col = pal[as.numeric(hr_cuts)])
+legend(1760000, 471000, legend = paste("<", round(br[-1])), fill = pal)                       
+```
+   
+
+[^3]: For the correction of breaks after using classIntervals with spplot/levelplot see here http://r.789695.n4.nabble.com/SpatialPolygon-with-the-max-value-gets-no-color-assigned-in-spplot-function-when-using-quot-at-quot-r-td4654672.html
+
+
+
+# 2. Choropleth mapping with `ggplot2`
+
+[`ggplot2`](http://ggplot2.org/) is a widely used and powerful plotting library for R. It is not specifically geared towards mapping, but one can generate great maps. 
+
+The `ggplot()` syntax is different from the previous as a plot is built up by adding components with a `+`. You can start with a layer showing the raw data then add layers of annotations and statistical summaries. This allows to easily superimpose either different visualizations of one dataset (e.g. a scatterplot and a fitted line) or different datasets (like different layers of the same geographical area)[^4]. 
+
+For an introduction to `ggplot` check out [this book by the package creator](http://link.springer.com/book/10.1007%2F978-3-319-24277-4) or [this](http://ggplot2.tidyverse.org/) for more pointers.
+
+
+[^4]: See Wilkinson L (2005): "The grammar of graphics". Statistics and computing, 2nd ed. Springer, New York. 
+
+In order to build a plot you start with initializing a ggplot object. In order to do that
+`ggplot()` takes:
+
+- a data argument usually a __dataframe__ and 
+- a mapping argument where x and y values to be plotted are supplied.
+
+In addition, minimally a geometry to be used to determine how the values should be displayed. This is to be added after an `+`. 
+
+    ggplot(data = my_data_frame, mapping = aes(x = name_of_column_with_x_value, y = name_of_column_with_y_value)) +
+      geom_point()
+
+Or shorter:
+
+    ggplot(my_data_frame, aes(name_of_column_with_x_value, name_of_column_with_y_value)) +
+      geom_point()
+
+
+So if we wanted to map polygons, like census tract boundaries, we would use longitude and latitude of their vertices as our `x` and `y` values and `geom_polygon()` as our geometry.
+
+***
+
+### Exercise 2
+
+1. To plot the equivalent to the map we created with `spplot` above we need to convert `philly`, which is a `SpatialPolygonsDataframe`, to a regular dataframe. 
+
+    `broom` is a general purpose package which provides functions to turn the messy output of built-in functions in R, such as lm, nls, or t.test, into [tidy data](https://www.jstatsoft.org/article/view/v059i10) frames. We use the `tidy()` command for the conversion[^5].
+
+[^5]: You may still see examples that use `ggplot2::fortify`. Be aware that this may be deprecated in the future.
+
+2. Load the `broom` library, and use `tidy` for the conversion. Create a new object, `philly_df` for the output. What columns and values do you get? 
+
+```{r eval=FALSE}
+library(broom)
+philly_df <- tidy(philly)
+head(philly_df)
+```
+
+3. Ha. `tidy()` will make us loose the attributes that we want to map, so we have to take care of that. We extract the polygon IDs from `philly` and add them to its dataframe as a column - I named it `polyID`. This requires a bit of understanding of the internal structure of `philly`. You can take a peek with `str(philly, max.level = 2)`. 
+
+    I use `slot(philly, "polygons")` as argument to `sapply()` to iterate over the polygons slots and then extract the ID slot for each polygon, also with `slot()`. 
+
+    Now we are able to use the polygon IDs with `merge()` to combine `philly` with `philly_df`. 
+
+```{r eval=FALSE}
+philly$polyID <- sapply(slot(philly, "polygons"), function(x) slot(x, "ID"))
+philly_df <- merge(philly_df, philly, by.x = "id", by.y="polyID")
+head(philly_df)
+```
+
+4. OK. All set to plot. 
+    
+    There is a lot going on in this command, so I have provided comments in the code.
+  
+
+```{r eval=FALSE}
+library(ggplot2)
+
+ggplot() +                                               # initialize ggplot object
+  geom_polygon(                                          # make a polygon
+    data = philly_df,                                    # data frame
+    aes(x = long, y = lat, group = group,                # coordinates, and group them by polygons
+        fill = cut_number(HOMIC_R, 5))) +                # variable to use for filling
+  scale_fill_brewer("Homicide Rate", palette = "OrRd") + # fill with brewer colors 
+  ggtitle("Philadelphia homicide rate per 100,000") +    # add title
+  theme(line = element_blank(),                          # remove axis lines .. 
+        axis.text=element_blank(),                       # .. tickmarks..
+        axis.title=element_blank(),                      # .. axis labels..
+        panel.background = element_blank()) +            # .. background gridlines
+  coord_equal()                                          # both axes the same scale
+```
+
+```{r echo=F, message=FALSE}
+philly_df <- tidy(philly)
+philly$polyID <- sapply(slot(philly, "polygons"), function(x) slot(x, "ID"))
+philly_df <- merge(philly_df, philly, by.x = "id", by.y="polyID")
+ggplot() + # initialize ggplot
+  geom_polygon(data = philly_df, aes(x=long, lat, group = group, fill = cut_number(HOMIC_R, 5))) +
+  scale_fill_brewer("Homicide Rate", palette = "OrRd") + # fill with brewer colors 
+  ggtitle("Philadelphia homicide rate per 100,000") +  # title
+  theme(line = element_blank(),  # remove the background, tickmarks, etc
+        axis.text=element_blank(),
+        axis.title=element_blank(),
+        panel.background = element_blank()) +
+  coord_equal()
+```
+
+**`ggplot` will soon be able to plot `sf` objects directly.** This will look like:
+
+    ggplot(philly_sf) + geom_sf(aes(fill=HOMIC_R))
+
+
+# 3. Adding basemaps with `ggmap`
+
+`ggmap` builds on `ggplot` and allows to pull in tiled basemaps from different services, like Google Maps and OpenStreetMaps[^6].
+
+So let's overlay the map from above on a google satellite basemap.
+
+***
+### Exercise 3
+
+1. First we use the `get_map()` command from `ggmap` to pull down the basemap. We need to tell it the location or the boundaries of the map, the zoom level, and what kind of map service we like (default is Google terrain). It will actually download the tile. `get_map()` returns a ggmap object, name it `ph_basemap`.
+
+    In order to view the map we then use `ggmap(ph_basemap)`.
+
+    Look up the syntax of `?get_map()`, go back and forth between `get_map(..)` and `ggmap(ph_basemap)` to find the correct parameters for our example.
+
+
+```{r eval=FALSE}
+library(ggmap)
+
+ph_basemap <- get_map(location="Philadelphia, PA", zoom=11, maptype = 'satellite')
+ggmap(ph_basemap)
+```
+
+2. Then we can reuse the code from the ggplot example above, just replacing the first line, where we initialized a ggplot object above
+        
+        ggplot() + 
+        ...
+
+    with the line to call our basemap:
+
+        ggmap(ph_basemap) +
+        ...
+        
+    (We can get rid of the `theme()` and `coord_equal()` parts, as `ggmap` takes care of most of it.)
+    
+    See if you can copy and paste this together. 
+
+```{r eval=FALSE}
+ggmap(ph_basemap) +
+  geom_polygon(data = philly_df, aes(x=long, lat, group = group, fill = cut_number(HOMIC_R, 5))) + 
+  scale_fill_brewer("Homicide Rate", palette = "OrRd") + 
+  ggtitle("Philadelphia homicide rate per 100,000") # +
+    #theme(line = element_blank(),  # don't need this here as ggmap takes care of it
+    #    axis.text=element_blank(),
+    #    axis.title=element_blank()
+    #   panel.background = element_blank()) + 
+  # coord_equal() # don't need this here as ggmap already takes care of this
+```
+
+
+3. If you try the above code, you will notice that there is a problem. Any idea what might be going on? 
+
+> Think for a moment before you look.
+
+```{r eval=FALSE}
+# Unfortunately we have to go back to our original `philly` object and reproject it 
+# to the CRS that works with Google maps. 
+# We then have to recreate our dataframe again.
+
+philly_WGS84 <- spTransform(philly, CRS("+init=epsg:4326"))
+philly_df_WGS84 <- tidy(philly_WGS84)
+philly_WGS84$polyID <- sapply(slot(philly_WGS84, "polygons"), function(x) slot(x, "ID"))
+philly_df_WGS84 <- merge(philly_df_WGS84, philly_WGS84, by.x = "id", by.y="polyID")
+
+ggmap(ph_basemap) +
+  geom_polygon(data = philly_df_WGS84, aes(x=long, lat, group = group, fill = cut_number(HOMIC_R, 5)), alpha = 0.8) + 
+  scale_fill_brewer("Homicide Rate", palette = "OrRd") + 
+  ggtitle("Philadelphia homicide rate per 100,000")
+```
+
+
+```{r echo=FALSE, message=FALSE}
+philly_WGS84 <- spTransform(philly, CRS("+init=epsg:4326"))
+philly_df_WGS84 <- tidy(philly_WGS84)
+philly_WGS84$polyID <- sapply(slot(philly_WGS84, "polygons"), function(x) slot(x, "ID"))
+philly_df_WGS84 <- merge(philly_df_WGS84, philly_WGS84, by.x = "id", by.y="polyID")
+ph_basemap <- get_map(location="Philadelphia, PA", zoom=11, maptype = 'satellite')
+ggmap(ph_basemap) +
+  geom_polygon(data = philly_df_WGS84, aes(x=long, lat, group = group, fill = cut_number(HOMIC_R, 5)), alpha = 0.8) + 
+  scale_fill_brewer("Homicide Rate", palette = "OrRd") + 
+  ggtitle("Philadelphia homicide rate per 100,000")
+```
+
+
+
+***
+
+Be aware that the `ggmap` library also includes functions for distance calculations, geocoding, and calculating routes.
+
+
+[^6]: Note that the use of Stamen Maps currently only works with a patch and that Cloudmade maps retired its API so it is no longer possible to be used as basemap. [`RgoogleMaps`](https://CRAN.R-project.org/package=RgoogleMaps) is another library that provides an interface to query the Google server for static maps.
+
+
+# 4. Choropleth with `tmap`
+
+`tmap` also borrows from the ggplot syntax and is specifically designed to make creation of thematic maps more convenient. It takes care of a lot of the styling and aesthetics. This reduces our amount of code significantly. We only need: 
+
+- `tm_shape()` and provide the `SpatialPolygonsDataframe` as argument directly, no need to convert into a data frame. This is followed by
+- `+`, and 
+- `tm_polygons` where we set
+    - the attribute variable to map, 
+    - the break style, and 
+    - the title.
+
+***
+### Exercise 4
+
+1. Check `tm_shape()` and `?tm_polygons` for how to set the parameters (map, break, title) and try on your own before you look.
+
+```{r eval=FALSE}
+library(tmap)
+tm_shape(philly) +
+  tm_polygons("HOMIC_R", style="quantile", title="Philadelphia /nhomicide rate /nper 100,000")
+```
+
+
+2. `tmap` has a very nice feature that allows us to give basic interactivity to the map. We can easily switch from "plot" mode into "view" mode and call the last plot, like so:
+
+```{r eval=FALSE}
+tmap_mode("view")
+last_map()
+```
+
+Cool huh?
+
+```{r echo=FALSE, message=FALSE}
+philly_tmap <- tm_shape(philly) +
+  tm_polygons("HOMIC_R", style="quantile", title="Philadelphia /nhomicide rate /nper 100,000")
+tmap_mode("view")
+philly_tmap
+```
+
+
+The `tmap` library also includes functions for simple spatial operations, geocoding and reverse geocoding using OSM. For more check `vignette("tmap-nutshell") `. 
+
+
+# 5. Web mapping with `leaflet`
+
+Lastly, `leaflet`[^7] makes use of the widely known ['Leaflet' JavaScript library](http://leafletjs.com), "the leading open-source JavaScript library for mobile-friendly interactive maps". We have already seen a simple use of leaflet in the `tmap` example. 
+
+The good news is that the `leaflet` library gives us loads of options to customize the web look and feel of the map. 
+
+The bad news is that the `leaflet` library gives us loads of options to customize the web look and feel of the map.
+
+You don't have to, but it makes the code more accessible if you use [the pipe operator `%>%`](https://github.com/tidyverse/magrittr) to chain the elements together when building up a map with `leaflet`. 
+
+Let's build up the map step by step.
+
+***
+### Exercise 5
+
+1. Load the `leaflet` library. Use the `leaflet()` function with the Spatial*Object and pipe it to addPolygons() function. Just to show us a default map of Philly.
+
+        leaflet(name_of_our_spatialPoly) %>%
+          addPolygons()
+  
+    Is this what you did?:
+    
+```{r eval=FALSE}
+library(leaflet) 
+
+# first try... ops what happened here
+leaflet(philly) %>%
+  addPolygons()
+```
+
+2. Second try.. better.
+
+```{r eval=FALSE}
+leaflet(philly_WGS84) %>%
+  addPolygons()
+```
+
+3. Map the homicide rate. For this we provide several parameters to the `addPolygons()` function that:
+
+    - remove stroke (polygon borders) 
+    - set a fillColor for each polygon based on `HOMIC_R` and make it look nice by adjusting fillOpacity and smoothFactor (how much to simplify the polyline on each zoom level). The fill color is generated using the `colorQuantile()` function, which takes the color scheme and the desired number of classes. `colorQuantile()` then returns a function that we supply to `addPolygons()` with the name of the value we want to map to constuct the color scheme. 
+    - add a popup with the `HOMIC_R` values. We will create as a vector of strings, that we then supply to `addPolygons()`.
+
+    Try the code below.
+
+```{r eval=FALSE}
+pal_fun <- colorQuantile("YlOrRd", NULL, n = 5)
+
+p_popup <- paste0("<strong>Homicide Rate: </strong>", philly_WGS84$HOMIC_R)
+
+leaflet(philly_WGS84) %>%
+  addPolygons(
+    stroke = FALSE, # remove polygon borders
+    fillColor = ~pal_fun(HOMIC_R), # set fill color with function from above and value
+    fillOpacity = 0.8, smoothFactor = 0.5, # make it nicer
+    popup = p_popup)  # add popup
+``` 
+
+
+4. Add the default basemap, which is OSM, with `addTiles()`. This you can do!
+
+```{r eval=FALSE}
+leaflet(philly_WGS84) %>%
+  addPolygons(
+    stroke = FALSE, 
+    fillColor = ~pal_fun(HOMIC_R),
+    fillOpacity = 0.8, smoothFactor = 0.5,
+    popup = p_popup) %>%
+  addTiles()
+```
+
+5. Add a legend. We will provide the `addLegend()` function with:
+
+    - the location of the legend on the map
+    - the function that creates the color palette
+    - the value we want the palette function to use
+    - a title
+
+```{r eval=FALSE}
+leaflet(philly_WGS84) %>%
+  addPolygons(
+    stroke = FALSE, 
+    fillColor = ~pal_fun(HOMIC_R),
+    fillOpacity = 0.8, smoothFactor = 0.5,
+    popup = p_popup) %>%
+  addTiles() %>%
+  addLegend("bottomright",  # location
+            pal=pal_fun,    # palette function
+            values=~HOMIC_R,  # value to be passed to palette function
+            title = 'Philadelphia homicide rate per 100,000') # legend title
+```
+
+6. Ok, so this is a bit annoying, since the labels of the legend show percentages instead of the actual value breaks. 
+
+    The formatting is set with 'labFormat()' and in the [documentation](https://cran.r-project.org/web/packages/leaflet/leaflet.pdf) we discover that:
+    
+    "By default, labFormat is basically format(scientific = FALSE,big.mark = ',') for the numeric palette, as.character() for the factor palette, and a function to return labels of the form âx[i] - x[i + 1]â for bin and quantile palettes (__in the case of quantile palettes, x is the probabilities instead of the values of breaks__)"
+
+    So it appears that we need to set the labels for our breaks manually. We replace the `pal` and `values` with the `colors` and `labels` arguments and set those directly using `brewer.pal()` and `breaks_qt` from an earlier section above.
+    
+```{r eval=FALSE}
+leaflet(philly_WGS84) %>%
+  addPolygons(
+    stroke = FALSE, 
+    fillColor = ~pal_fun(HOMIC_R),
+    fillOpacity = 0.8, smoothFactor = 0.5,
+    popup = p_popup) %>%
+  addTiles() %>%
+  addLegend("bottomright", 
+            colors = brewer.pal(5, "YlOrRd"), 
+            labels = paste0("up to ", as.character(round(breaks_qt$brks[-1]))),
+            title = 'Philadelphia homicide rate per 100,000')
+```
+
+7. That's more like it. Finally, I have added for you a control to switch to another basemap and turn the philly polygon off and on. Take a look at the changes in the code below.
+
+```{r eval=FALSE}
+leaflet(philly_WGS84) %>%
+  addPolygons(
+    stroke = FALSE, 
+    fillColor = ~pal_fun(HOMIC_R),
+    fillOpacity = 0.8, smoothFactor = 0.5,
+    popup = p_popup,
+    group = "philly") %>%
+  addTiles(group = "OSM") %>%
+  addProviderTiles("CartoDB.DarkMatter", group = "Carto") %>%
+  addLegend("bottomright", 
+            colors = brewer.pal(5, "YlOrRd"), 
+            labels = paste0("up to ", as.character(round(breaks_qt$brks[-1]))),
+            title = 'Philadelphia homicide rate per 100,000') %>%
+  addLayersControl(baseGroups = c("OSM", "Carto"), 
+                   overlayGroups = c("philly"))  
+```
+
+
+```{r echo=FALSE}
+philly_WGS84 <- spTransform(philly, CRS("+init=epsg:4326"))
+pal_fun <- colorQuantile("YlOrRd", NULL, n = 5)
+p_popup <- paste0("<strong>Homicide Rate: </strong>", 
+                      philly_WGS84$HOMIC_R)
+leaflet(philly_WGS84) %>%
+  addPolygons(
+    stroke = FALSE, 
+    fillColor = ~pal_fun(HOMIC_R),
+    fillOpacity = 0.8, smoothFactor = 0.5,
+    popup = p_popup,
+    group = "philly") %>%
+  addTiles(group = "OSM") %>%
+  addProviderTiles("CartoDB.DarkMatter", group = "Carto") %>%
+  addLegend("bottomright", 
+            colors = brewer.pal(5, "YlOrRd"), 
+            labels = paste0("up to ", as.character(round(breaks_qt$brks[-1]))),
+            title = 'Philadelphia homicide rate per 100,000') %>%
+  addLayersControl(baseGroups = c("OSM", "Carto"), 
+                   overlayGroups = c("philly"))  
+```
+
+
+[^7]: The [`leafletR`](https://CRAN.R-project.org/package=leafletR) package does very similar things. The syntax approach is different between the two packages. My reason for using `leaflet` is that it integrates well with RStudio, Shiny, and R Markdown.
+
+If you want to take this further you may want to look into additional tools. [Here is a demo](https://cengel.shinyapps.io/RioSlaveMarket/) using `ggplot`, `leaflet`, `shiny`, and [RStudio's flexdashboard](http://rmarkdown.rstudio.com/flexdashboard/) template to bring it all together.
