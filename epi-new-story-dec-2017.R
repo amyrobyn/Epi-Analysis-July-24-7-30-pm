@@ -158,13 +158,17 @@ merged_points$DDLon<-merged_points$DDLon*-1
   writeOGR(confirmed_acute_pos, "C:/Users/amykr/Google Drive/Kent/james/dissertation/chkv and dengue/data/municipal data/georeferenced cases june 15", "confirmed_acute_pos", driver = "ESRI Shapefile")
   confirmed_acute_pos.cas<-  as.data.frame(confirmed_acute_pos)
   confirmed_acute_pos.cas<-confirmed_acute_pos.cas[, grepl("CODIGO|cases|start_of_week", names(confirmed_acute_pos.cas))]
-  write.table(confirmed_acute_pos.cas,file="C:/Users/amykr/Google Drive/Kent/james/dissertation/chkv and dengue/data/municipal data/georeferenced cases june 15/confirmed_acute_pos.cas", quote = F, row.names = F, col.names = F)
+  confirmed_acute_pos.cas<-confirmed_acute_pos.cas[order(-(grepl('case', names(confirmed_acute_pos.cas)))+1L)]
+  confirmed_acute_pos.cas<-confirmed_acute_pos.cas[order(-(grepl('CODIGO', names(confirmed_acute_pos.cas)))+1L)]
+  write.table(confirmed_acute_pos.cas,file="C:/Users/amykr/Google Drive/Kent/james/dissertation/chkv and dengue/data/municipal data/georeferenced cases june 15/confirmed_acute_pos.cas", quote = F, row.names = F)
   
   confirmed_acute_neg<- merged_points[which((merged_points$confirmed_acute=="Confirmed -"))  , ]
   writeOGR(confirmed_acute_neg, "C:/Users/amykr/Google Drive/Kent/james/dissertation/chkv and dengue/data/municipal data/georeferenced cases june 15", "confirmed_acute_neg", driver = "ESRI Shapefile")
   confirmed_acute_neg.ctl<-  as.data.frame(confirmed_acute_neg)
   confirmed_acute_neg.ctl<-confirmed_acute_neg.ctl[, grepl("CODIGO|cases|start_of_week", names(confirmed_acute_neg.ctl))]
-  write.table(confirmed_acute_neg.ctl,file="C:/Users/amykr/Google Drive/Kent/james/dissertation/chkv and dengue/data/municipal data/georeferenced cases june 15/confirmed_acute_neg.ctl", quote = F, row.names = F, col.names = F)
+  confirmed_acute_neg.ctl<-confirmed_acute_neg.ctl[order(-(grepl('case', names(confirmed_acute_neg.ctl)))+1L)]
+  confirmed_acute_neg.ctl<-confirmed_acute_neg.ctl[order(-(grepl('CODIGO', names(confirmed_acute_neg.ctl)))+1L)]
+  write.table(confirmed_acute_neg.ctl,file="C:/Users/amykr/Google Drive/Kent/james/dissertation/chkv and dengue/data/municipal data/georeferenced cases june 15/confirmed_acute_neg.ctl", quote = F, row.names = F)
 
 
 
